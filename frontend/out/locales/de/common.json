@@ -1,0 +1,143 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "services": "Dienstleistungen"
+  },
+  "hero": {
+    "title": "Professioneller Handtaschenhersteller",
+    "subtitle": "OEM & ODM Seit 1992",
+    "cta_primary": "Produkte Ansehen",
+    "cta_secondary": "Kontaktieren Sie Uns",
+    "stat1": "Jahre Erfahrung",
+    "stat2": "Länder",
+    "stat3": "Fabrikfläche (㎡)"
+  },
+  "company": {
+    "name": "Guangzhou Dayi Leather Ltd.",
+    "slogan": "Professioneller Handtaschenhersteller",
+    "description": "Hochwertiger Ledertaschenlieferant für professionelle Marken weltweit"
+  },
+  "categories": {
+    "title": "Produktkategorien",
+    "handbags": "Handtaschen",
+    "shoulder_bags": "Umhängetaschen",
+    "crossbody_bags": "Crossbody-Taschen",
+    "tote_bags": "Tragetaschen",
+    "purses": "Geldbörsen",
+    "all": "Alle",
+    "hot_sale": "Bestseller",
+    "new_arrivals": "Neuheiten 2026"
+  },
+  "products": {
+    "title": "Ausgewählte Produkte",
+    "new": "Neu",
+    "view_all": "Alle Produkte Ansehen",
+    "moq": "MOQ",
+    "loading": "Laden...",
+    "no_products": "Keine Produkte in dieser Kategorie",
+    "all_products": "Alle Produkte",
+    "products_available": "Produkte verfügbar",
+    "load_failed": "Fehler beim Laden der Produkte",
+    "load_error": "Fehler beim Laden der Produkte",
+    "view_details": "Details Anzeigen"
+  },
+  "features": {
+    "title": "Warum Uns Wählen",
+    "subtitle": "Professioneller Handtaschenhersteller, vertrauenswürdiger Partner",
+    "custom": {
+      "title": "Kundenspezifischer Service",
+      "description": "30 Jahre Erfahrung, OEM/ODM-Unterstützung, Kleinserien-Anpassung"
+    },
+    "quality": {
+      "title": "Qualitätssicherung",
+      "description": "Strenge Qualitätskontrolle, jedes Produkt durchläuft mehrere Inspektionen"
+    },
+    "delivery": {
+      "title": "Schnelle Lieferung",
+      "description": "7-15 Tage für Muster, 30-45 Tage für Massenproduktion"
+    },
+    "export": {
+      "title": "Globaler Export",
+      "description": "Export in 56 Länder, umfangreiche internationale Handelserfahrung"
+    },
+    "factory": {
+      "title": "Direkt vom Hersteller",
+      "description": "5000+ m² Fabrik, keine Zwischenhändler, bessere Preise"
+    },
+    "team": {
+      "title": "Professionelles Team",
+      "description": "Senior-Designer und Handwerker, persönlicher Service"
+    }
+  },
+  "footer": {
+    "company_info": "Unternehmensinformationen",
+    "quick_links": "Schnelllinks",
+    "contact_us": "Kontaktieren Sie Uns",
+    "follow_us": "Folgen Sie Uns",
+    "copyright": "© 2024 Guangzhou Dayi Leather Ltd. Alle Rechte vorbehalten.",
+    "description": "Professioneller Handtaschenhersteller seit 1992. Hochwertige OEM & ODM-Dienstleistungen für Modemarken weltweit.",
+    "electronics": "Handtaschen",
+    "fashion": "Tragetaschen",
+    "industrial": "Umhängetaschen",
+    "home": "Crossbody-Taschen",
+    "about": "Über Uns",
+    "careers": "Karriere",
+    "press": "Presse",
+    "blog": "Blog",
+    "help": "Hilfecenter",
+    "contact": "Kontakt",
+    "shipping": "Versand",
+    "returns": "Rücksendungen",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "cookies": "Cookie-Richtlinie",
+    "gdpr": "DSGVO",
+    "products_title": "Produkte",
+    "company_title": "Unternehmen",
+    "support_title": "Support",
+    "legal_title": "Rechtliches",
+    "newsletter_title": "Bleiben Sie Informiert",
+    "newsletter_desc": "Abonnieren Sie unseren Newsletter für die neuesten Updates und Angebote",
+    "email_placeholder": "E-Mail eingeben",
+    "subscribe": "Abonnieren",
+    "back_to_top": "Nach Oben",
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "testimonials": {
+    "title": "Kundenerfolgsstories",
+    "subtitle": "Vertraut von Modemarken weltweit für Premium-Handtaschenherstellung",
+    "trusted_brands": "Vertrauenswürdige Marken",
+    "products_delivered": "Gelieferte Produkte",
+    "satisfaction_rate": "Zufriedenheitsrate",
+    "years_experience": "Jahre Erfahrung",
+    "quality_management": "Qualitätsmanagement",
+    "export_license": "Exportlizenz",
+    "global_trade": "Globaler Handel",
+    "quality_certified": "Qualitätszertifiziert",
+    "premium_standards": "Premium-Standards",
+    "professional_service": "Professioneller Service",
+    "certified_title": "Zertifiziert und Vertrauenswürdig",
+    "certified_subtitle": "Branchenführende Standards und Zertifizierungen"
+  },
+  "brands": {
+    "title": "Vertraut von führenden Unternehmen weltweit"
+  },
+  "carousel": {
+    "slide1_title": "2026 Mode-Neuheiten",
+    "slide1_subtitle": "Premium-Handtaschen, führend in Modetrends",
+    "slide2_title": "Luxus-Handtaschen",
+    "slide2_subtitle": "Klassisches Design, Geschmack und Eleganz",
+    "slide3_title": "Stilvolle Umhängetaschen",
+    "slide3_subtitle": "Leicht zu kombinieren, elegantes Temperament",
+    "slide4_title": "Elegante Crossbody-Taschen",
+    "slide4_subtitle": "Tragbar und praktisch, modisch vielseitig",
+    "slide5_title": "Bestseller",
+    "slide5_subtitle": "Beliebte Artikel, Qualität garantiert",
+    "stat_products": "Produktserien",
+    "stat_years": "Jahre Erfahrung",
+    "stat_countries": "Exportländer"
+  }
+}
