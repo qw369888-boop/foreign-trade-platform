@@ -1,0 +1,143 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "products": "Ürünler",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "services": "Hizmetler"
+  },
+  "hero": {
+    "title": "Profesyonel El Çantası Üreticisi",
+    "subtitle": "OEM & ODM 1992'den Beri",
+    "cta_primary": "Ürünleri Görüntüle",
+    "cta_secondary": "Bize Ulaşın",
+    "stat1": "Yıl Deneyim",
+    "stat2": "Ülke",
+    "stat3": "Fabrika Alanı (㎡)"
+  },
+  "company": {
+    "name": "Guangzhou Dayi Leather Ltd.",
+    "slogan": "Profesyonel El Çantası Üreticisi",
+    "description": "Dünya çapında profesyonel markalar için yüksek kaliteli deri çanta tedarikçisi"
+  },
+  "categories": {
+    "title": "Ürün Kategorileri",
+    "handbags": "El Çantaları",
+    "shoulder_bags": "Omuz Çantaları",
+    "crossbody_bags": "Çapraz Çantalar",
+    "tote_bags": "Alışveriş Çantaları",
+    "purses": "Cüzdanlar",
+    "all": "Tümü",
+    "hot_sale": "Çok Satanlar",
+    "new_arrivals": "2026 Yeni Ürünler"
+  },
+  "products": {
+    "title": "Öne Çıkan Ürünler",
+    "new": "Yeni",
+    "view_all": "Tüm Ürünleri Gör",
+    "moq": "MOQ",
+    "loading": "Yükleniyor...",
+    "no_products": "Bu kategoride ürün yok",
+    "all_products": "Tüm Ürünler",
+    "products_available": "ürün mevcut",
+    "load_failed": "Ürünler yüklenemedi",
+    "load_error": "Ürün yükleme hatası",
+    "view_details": "Detayları Gör"
+  },
+  "features": {
+    "title": "Neden Bizi Seçmelisiniz",
+    "subtitle": "Profesyonel el çantası üreticisi, güvenilir ortak",
+    "custom": {
+      "title": "Özel Hizmet",
+      "description": "30 yıl deneyim, OEM/ODM desteği, küçük parti özelleştirme"
+    },
+    "quality": {
+      "title": "Kalite Güvencesi",
+      "description": "Sıkı kalite kontrolü, her ürün birden fazla denetimden geçer"
+    },
+    "delivery": {
+      "title": "Hızlı Teslimat",
+      "description": "Numuneler için 7-15 gün, seri üretim için 30-45 gün"
+    },
+    "export": {
+      "title": "Küresel İhracat",
+      "description": "56 ülkeye ihracat, zengin uluslararası ticaret deneyimi"
+    },
+    "factory": {
+      "title": "Doğrudan Fabrikadan",
+      "description": "5000+ m² fabrika, aracı yok, daha iyi fiyatlar"
+    },
+    "team": {
+      "title": "Profesyonel Ekip",
+      "description": "Kıdemli tasarımcılar ve zanaatkarlar, kişiselleştirilmiş hizmet"
+    }
+  },
+  "footer": {
+    "company_info": "Şirket Bilgileri",
+    "quick_links": "Hızlı Bağlantılar",
+    "contact_us": "Bize Ulaşın",
+    "follow_us": "Bizi Takip Edin",
+    "copyright": "© 2024 Guangzhou Dayi Leather Ltd. Tüm hakları saklıdır.",
+    "description": "1992'den beri profesyonel çanta üreticisi. Dünya çapında moda markaları için yüksek kaliteli OEM & ODM hizmetleri.",
+    "electronics": "El Çantaları",
+    "fashion": "Alışveriş Çantaları",
+    "industrial": "Omuz Çantaları",
+    "home": "Çapraz Çantalar",
+    "about": "Hakkımızda",
+    "careers": "Kariyer",
+    "press": "Basın",
+    "blog": "Blog",
+    "help": "Yardım Merkezi",
+    "contact": "İletişim",
+    "shipping": "Kargo",
+    "returns": "İadeler",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Hizmet Şartları",
+    "cookies": "Çerez Politikası",
+    "gdpr": "GDPR",
+    "products_title": "Ürünler",
+    "company_title": "Şirket",
+    "support_title": "Destek",
+    "legal_title": "Yasal",
+    "newsletter_title": "Güncel Kalın",
+    "newsletter_desc": "En son güncellemeler ve teklifler için bültenimize abone olun",
+    "email_placeholder": "E-postanızı girin",
+    "subscribe": "Abone Ol",
+    "back_to_top": "Yukarı Dön",
+    "rights": "Tüm hakları saklıdır."
+  },
+  "testimonials": {
+    "title": "Müşteri Başarı Hikayeleri",
+    "subtitle": "Premium çanta üretimi için dünya çapında moda markalarının güvendiği",
+    "trusted_brands": "Güvenilen Markalar",
+    "products_delivered": "Teslim Edilen Ürünler",
+    "satisfaction_rate": "Memnuniyet Oranı",
+    "years_experience": "Yıl Deneyim",
+    "quality_management": "Kalite Yönetimi",
+    "export_license": "İhracat Lisansı",
+    "global_trade": "Küresel Ticaret",
+    "quality_certified": "Kalite Sertifikalı",
+    "premium_standards": "Premium Standartlar",
+    "professional_service": "Profesyonel Hizmet",
+    "certified_title": "Sertifikalı ve Güvenilir",
+    "certified_subtitle": "Sektör lideri standartlar ve sertifikalar"
+  },
+  "brands": {
+    "title": "Dünya çapında önde gelen şirketler tarafından güvenilir"
+  },
+  "carousel": {
+    "slide1_title": "2026 Moda Yenilikleri",
+    "slide1_subtitle": "Premium kaliteli çantalar, moda trendlerinde öncü",
+    "slide2_title": "Lüks Çantalar",
+    "slide2_subtitle": "Klasik tasarım, zevk ve zarafet sergiliyor",
+    "slide3_title": "Şık Omuz Çantaları",
+    "slide3_subtitle": "Eşleştirmesi kolay, zarif mizaç",
+    "slide4_title": "Zarif Çapraz Çantalar",
+    "slide4_subtitle": "Taşınabilir ve pratik, modaya uygun çok yönlü",
+    "slide5_title": "En Çok Satanlar",
+    "slide5_subtitle": "Popüler ürünler, kalite garantili",
+    "stat_products": "Ürün Serileri",
+    "stat_years": "Yıl Deneyim",
+    "stat_countries": "İhracat Ülkeleri"
+  }
+}

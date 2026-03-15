@@ -1,0 +1,13 @@
+[build]
+  publish = "out"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/products/*"
+  to = "/products/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404

@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:14-alpine
+    container_name: ft_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: foreign_trade_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ft_network
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: ft_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ft_network
+
+  # 后端 API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ft_backend
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/foreign_trade_db
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - ft_network
+    restart: unless-stopped
+
+  # 前端网站
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ft_frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - ft_network
+    restart: unless-stopped
+
+  # 机器人系统
+  bot-system:
+    build:
+      context: ./bot-system
+      dockerfile: Dockerfile
+    container_name: ft_bot_system
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/foreign_trade_db
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - redis
+      - backend
+    volumes:
+      - ./bot-system:/app
+      - /app/node_modules
+    networks:
+      - ft_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  ft_network:
+    driver: bridge

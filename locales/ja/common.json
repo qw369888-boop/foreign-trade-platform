@@ -1,0 +1,143 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "products": "製品",
+    "about": "会社概要",
+    "contact": "お問い合わせ",
+    "services": "サービス"
+  },
+  "hero": {
+    "title": "プロフェッショナルハンドバッグメーカー",
+    "subtitle": "OEM & ODM 1992年より",
+    "cta_primary": "製品を見る",
+    "cta_secondary": "お問い合わせ",
+    "stat1": "年の経験",
+    "stat2": "カ国",
+    "stat3": "工場面積 (㎡)"
+  },
+  "company": {
+    "name": "広州大益皮具有限公司",
+    "slogan": "プロフェッショナルハンドバッグメーカー",
+    "description": "世界中のプロフェッショナルブランド向け高品質レザーバッグサプライヤー"
+  },
+  "categories": {
+    "title": "製品カテゴリー",
+    "handbags": "ハンドバッグ",
+    "shoulder_bags": "ショルダーバッグ",
+    "crossbody_bags": "クロスボディバッグ",
+    "tote_bags": "トートバッグ",
+    "purses": "財布",
+    "all": "すべて",
+    "hot_sale": "人気商品",
+    "new_arrivals": "2026新作"
+  },
+  "products": {
+    "title": "注目の製品",
+    "new": "新作",
+    "view_all": "すべての製品を見る",
+    "moq": "最小注文数",
+    "loading": "読み込み中...",
+    "no_products": "このカテゴリに製品がありません",
+    "all_products": "すべての製品",
+    "products_available": "製品",
+    "load_failed": "製品の読み込みに失敗しました",
+    "load_error": "製品の読み込みエラー",
+    "view_details": "詳細を見る"
+  },
+  "features": {
+    "title": "選ばれる理由",
+    "subtitle": "プロフェッショナルハンドバッグメーカー、信頼できるパートナー",
+    "custom": {
+      "title": "カスタムサービス",
+      "description": "30年の経験、OEM/ODMサポート、小ロットカスタマイズ"
+    },
+    "quality": {
+      "title": "品質保証",
+      "description": "厳格な品質管理、すべての製品が複数の検査を通過"
+    },
+    "delivery": {
+      "title": "迅速な配送",
+      "description": "サンプル7-15日、量産30-45日"
+    },
+    "export": {
+      "title": "グローバル輸出",
+      "description": "56カ国への輸出、豊富な国際貿易経験"
+    },
+    "factory": {
+      "title": "工場直送",
+      "description": "5000+㎡の工場、仲介業者なし、より良い価格"
+    },
+    "team": {
+      "title": "プロフェッショナルチーム",
+      "description": "シニアデザイナーと職人、パーソナライズされたサービス"
+    }
+  },
+  "footer": {
+    "company_info": "会社情報",
+    "quick_links": "クイックリンク",
+    "contact_us": "お問い合わせ",
+    "follow_us": "フォローする",
+    "copyright": "© 2024 広州大益皮具有限公司 全著作権所有。",
+    "description": "1992年から専門ハンドバッグメーカー。世界中のファッションブランド向け高品質OEM & ODMサービス。",
+    "electronics": "ハンドバッグ",
+    "fashion": "トートバッグ",
+    "industrial": "ショルダーバッグ",
+    "home": "クロスボディバッグ",
+    "about": "会社概要",
+    "careers": "採用情報",
+    "press": "プレス",
+    "blog": "ブログ",
+    "help": "ヘルプセンター",
+    "contact": "お問い合わせ",
+    "shipping": "配送",
+    "returns": "返品",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "cookies": "クッキーポリシー",
+    "gdpr": "GDPR",
+    "products_title": "製品",
+    "company_title": "会社",
+    "support_title": "サポート",
+    "legal_title": "法的情報",
+    "newsletter_title": "最新情報を受け取る",
+    "newsletter_desc": "最新のアップデートとオファーを受け取るにはニュースレターを購読してください",
+    "email_placeholder": "メールアドレスを入力",
+    "subscribe": "購読",
+    "back_to_top": "トップへ戻る",
+    "rights": "全著作権所有。"
+  },
+  "testimonials": {
+    "title": "お客様の成功事例",
+    "subtitle": "世界中のファッションブランドから信頼されるプレミアムハンドバッグ製造",
+    "trusted_brands": "信頼されるブランド",
+    "products_delivered": "納品製品",
+    "satisfaction_rate": "満足度",
+    "years_experience": "年の経験",
+    "quality_management": "品質管理",
+    "export_license": "輸出ライセンス",
+    "global_trade": "グローバル貿易",
+    "quality_certified": "品質認証",
+    "premium_standards": "プレミアム基準",
+    "professional_service": "プロフェッショナルサービス",
+    "certified_title": "認証と信頼",
+    "certified_subtitle": "業界をリードする基準と認証"
+  },
+  "brands": {
+    "title": "世界をリードする企業から信頼されています"
+  },
+  "carousel": {
+    "slide1_title": "2026ファッション新作",
+    "slide1_subtitle": "プレミアム品質のハンドバッグ、ファッショントレンドをリード",
+    "slide2_title": "ラグジュアリーハンドバッグ",
+    "slide2_subtitle": "クラシックなデザイン、品格と優雅さを表現",
+    "slide3_title": "スタイリッシュショルダーバッグ",
+    "slide3_subtitle": "簡単にマッチ、エレガントな気質",
+    "slide4_title": "エレガントクロスボディバッグ",
+    "slide4_subtitle": "ポータブルで実用的、ファッショナブルで多用途",
+    "slide5_title": "ベストセラー",
+    "slide5_subtitle": "人気商品、品質保証",
+    "stat_products": "製品シリーズ",
+    "stat_years": "年の経験",
+    "stat_countries": "輸出国"
+  }
+}
