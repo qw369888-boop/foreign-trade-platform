@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { FiMenu, FiX, FiShoppingCart, FiUser, FiSun, FiMoon, FiGlobe, FiChevronDown, FiLogOut, FiPackage } from 'react-icons/fi'
-import { useTranslation } from 'next-i18next'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -15,11 +14,23 @@ export default function Header() {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const { theme, setTheme } = useTheme()
-  const { t, i18n } = useTranslation('common')
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const { cartItems } = useCart()
   const { user, logout } = useAuth()
+
+  // 静态文本替代翻译
+  const isZh = router.asPath.startsWith('/zh')
+  const navText = {
+    home: isZh ? '首页' : 'Home',
+    products: isZh ? '产品' : 'Products', 
+    about: isZh ? '关于我们' : 'About Us',
+    contact: isZh ? '联系我们' : 'Contact',
+    login: isZh ? '登录' : 'Login',
+    logout: isZh ? '退出登录' : 'Logout',
+    orders: isZh ? '我的订单' : 'My Orders',
+    admin: isZh ? '管理后台' : 'Admin Panel'
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -35,7 +46,7 @@ export default function Header() {
     { code: 'zh', name: '中文', flag: '🇨🇳' },
   ]
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0]
+  const currentLanguage = languages.find(lang => lang.code === (isZh ? 'zh' : 'en')) || languages[0]
 
   const changeLanguage = (lng) => {
     console.log('Changing language to:', lng)
@@ -49,10 +60,10 @@ export default function Header() {
   }
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Products', path: '/products' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: navText.home, path: isZh ? '/zh' : '/' },
+    { name: navText.products, path: isZh ? '/zh/products' : '/products' },
+    { name: navText.about, path: isZh ? '/zh/about' : '/about' },
+    { name: navText.contact, path: isZh ? '/zh/contact' : '/contact' },
   ]
 
   return (
@@ -203,14 +214,14 @@ export default function Header() {
                           <p className="text-sm font-medium text-white">{user.firstName} {user.lastName}</p>
                           <p className="text-xs text-gray-400">{user.email}</p>
                         </div>
-                        <Link href="/orders">
+                        <Link href={isZh ? "/zh/orders" : "/orders"}>
                           <motion.button
                             whileHover={{ backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
                             onClick={() => setIsUserMenuOpen(false)}
                             className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-300 hover:text-white transition-colors"
                           >
                             <FiPackage className="w-4 h-4" />
-                            <span className="text-sm">{t('nav.orders') || 'My Orders'}</span>
+                            <span className="text-sm">{navText.orders}</span>
                           </motion.button>
                         </Link>
                         <motion.button
@@ -222,24 +233,24 @@ export default function Header() {
                           className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-300 hover:text-red-400 transition-colors"
                         >
                           <FiLogOut className="w-4 h-4" />
-                          <span className="text-sm">{t('auth.logout') || 'Logout'}</span>
+                          <span className="text-sm">{navText.logout}</span>
                         </motion.button>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </>
               ) : (
-                <Link href="/login">
+                <Link href={isZh ? "/zh/login" : "/login"}>
                   <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-neon-blue to-neon-purple text-white font-medium transition-all cursor-pointer hover:scale-105 active:scale-95">
                     <FiUser className="w-4 h-4" />
-                    <span className="text-sm">{t('auth.login') || 'Login'}</span>
+                    <span className="text-sm">{navText.login}</span>
                   </div>
                 </Link>
               )}
             </div>
 
             {/* Cart */}
-            <Link href="/cart">
+            <Link href={isZh ? "/zh/cart" : "/cart"}>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
