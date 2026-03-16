@@ -1,107 +1,147 @@
-# 🚀 独立站部署指南
+# 外贸独立站部署指南
 
-## 📋 部署步骤
+## 🚀 快速部署
 
-### 第一步：安装 Vercel CLI
-```bash
-npm install -g vercel
-```
+### 方案一：Vercel 部署（推荐）
 
-### 第二步：部署后端 API
-```bash
-cd E:\Projects\foreign-trade-platform\backend
-vercel --prod
-```
-- 选择项目名称：`dayileather-api`
-- 确认部署设置
-- 记录生成的 API 域名
+1. **准备工作**
+   ```bash
+   # 安装 Vercel CLI
+   npm i -g vercel
+   
+   # 登录 Vercel
+   vercel login
+   ```
 
-### 第三步：部署前端网站
-```bash
-cd E:\Projects\foreign-trade-platform\frontend
-vercel --prod
-```
-- 选择项目名称：`dayileather`
-- 确认部署设置
-- 记录生成的网站域名
+2. **部署前端**
+   ```bash
+   cd frontend
+   vercel --prod
+   ```
 
-### 第四步：配置自定义域名（可选）
-1. 在 Vercel 控制台添加自定义域名
-2. 配置 DNS 解析
-3. 自动获得 SSL 证书
+3. **部署后端**
+   ```bash
+   cd backend
+   vercel --prod
+   ```
 
-## 🌐 部署后的访问地址
+### 方案二：VPS 服务器部署
 
-### 临时域名（立即可用）
-- **网站**：https://dayileather.vercel.app
-- **API**：https://dayileather-api.vercel.app
+1. **服务器要求**
+   - Ubuntu 20.04+ / CentOS 7+
+   - Node.js 18+
+   - 2GB+ RAM
+   - 20GB+ 存储
 
-### 推荐自定义域名
-- dayileather.com
-- dayihandbags.com
-- dayileathergoods.com
+2. **部署步骤**
+   ```bash
+   # 克隆项目
+   git clone <your-repo-url>
+   cd foreign-trade-platform
+   
+   # 运行部署脚本
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
 
-## ✅ 部署检查清单
+## 🔧 环境配置
 
-- [ ] 后端 API 部署成功
-- [ ] 前端网站部署成功
-- [ ] 产品数据正常显示
-- [ ] 购物车功能正常
-- [ ] 联系表单正常
-- [ ] 多语言切换正常
-- [ ] 移动端适配正常
+### 必需的环境变量
 
-## 🔧 环境变量配置
+```env
+# API地址
+NEXT_PUBLIC_API_URL=https://your-api-domain.com
+NEXT_PUBLIC_SITE_URL=https://your-site-domain.com
 
-在 Vercel 控制台设置以下环境变量：
+# 数据库
+DATABASE_URL=mysql://user:pass@host:port/db
 
-### 前端环境变量
-```
-NEXT_PUBLIC_API_URL=https://dayileather-api.vercel.app
-NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_test_...
-```
+# 支付配置
+STRIPE_SECRET_KEY=sk_live_...
+PAYPAL_CLIENT_ID=your_paypal_id
 
-### 后端环境变量
-```
-NODE_ENV=production
-DATABASE_URL=your_database_url
+# 邮件配置
 SMTP_HOST=smtp.gmail.com
-SMTP_USER=qw369888@gmail.com
-SMTP_PASS=your_email_password
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
 ```
 
-## 📊 部署后优化
+## 📊 功能清单
 
-### SEO 优化
-- 提交到 Google Search Console
-- 生成 sitemap.xml
-- 配置 robots.txt
+### ✅ 已完成功能
 
-### 性能优化
-- 启用 CDN 加速
-- 图片压缩优化
-- 代码分割优化
+- **前端展示**
+  - 🏠 首页展示（Hero、产品、公司介绍）
+  - 🛍️ 产品页面（168个产品，分类筛选）
+  - 🛒 购物车功能
+  - 🌐 中英文双语
+  - 📱 响应式设计
 
-### 监控设置
-- 配置 Google Analytics
-- 设置错误监控
-- 性能监控
+- **管理后台**
+  - 📊 实时数据统计
+  - 🌍 在线用户IP监控
+  - 📅 日期筛选查询
+  - 👥 访客行为分析
+  - 🛒 订单管理
+  - 💰 收入统计
+  - 🔄 退款管理
 
-## 🚨 注意事项
+- **后端API**
+  - 🔐 用户认证系统
+  - 📦 产品管理API
+  - 🛒 订单处理API
+  - 📊 统计分析API
+  - 🗄️ SQLite数据库
 
-1. **数据库**：需要配置生产环境数据库
-2. **邮件服务**：配置 SMTP 服务发送询盘邮件
-3. **支付网关**：配置 Stripe/PayPal 生产环境
-4. **域名备案**：如使用中国服务器需要备案
+### 🔐 管理员账号
+
+- **邮箱**: admin@example.com
+- **密码**: admin123
+- **后台**: https://your-domain.com/admin
+
+## 🌐 域名配置
+
+### DNS 设置
+```
+A记录: @ -> Vercel IP
+CNAME: www -> your-app.vercel.app
+```
+
+### SSL证书
+Vercel自动提供免费SSL证书
+
+## 📈 SEO优化
+
+### 已配置项目
+- Meta标签优化
+- 多语言支持
+- 响应式设计
+- 快速加载优化
+
+### 建议添加
+- Google Analytics
+- Google Search Console
+- 网站地图
+- 结构化数据
+
+## 🔧 维护指南
+
+### 日常维护
+- 定期备份数据库
+- 监控服务器性能
+- 更新依赖包
+- 查看访客统计
+
+### 故障排查
+- 检查服务器日志
+- 验证API连接
+- 测试支付功能
+- 确认邮件发送
 
 ## 📞 技术支持
 
-如遇到部署问题，请检查：
-1. Node.js 版本兼容性
-2. 环境变量配置
-3. API 接口连通性
-4. 数据库连接状态
+如需技术支持，请联系开发团队。
 
 ---
-
-**部署完成后，你的独立站将全球可访问！** 🌍
+*部署时间: 2026-03-16*
+*版本: v1.0.0*

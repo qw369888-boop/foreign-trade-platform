@@ -41,26 +41,57 @@ export default function FeaturedProducts() {
   ]
 
   useEffect(() => {
-    const category = categories.find(c => c.name === selectedCategory)
-    const categoryParam = selectedCategory === 'All' 
-      ? '' 
-      : `category=${encodeURIComponent(category?.nameDB || selectedCategory)}&`
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-    const url = `${baseUrl}/api/products?${categoryParam}lang=${i18n.language}&limit=8`
-    
-    setLoading(true)
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.data) {
-          setProducts(data.data)
+    const loadProducts = async () => {
+      try {
+        setLoading(true)
+        // 使用静态数据文件
+        const response = await fetch('/data/products.json')
+        const allProducts = await response.json()
+        
+        let filteredProducts = allProducts
+        
+        // 根据选中的分类过滤产品
+        if (selectedCategory !== 'All') {
+          const category = categories.find(c => c.name === selectedCategory)
+          if (category) {
+            // 根据不同的分类名称进行匹配
+            filteredProducts = allProducts.filter(product => {
+              // 处理特殊分类
+              if (selectedCategory === 'Hot Sale') {
+                // 热卖产品：价格较低或有折扣的产品
+                return product.compare_price && product.price < product.compare_price
+              } else if (selectedCategory === '2026 New Arrivals') {
+                // 2026新品：产品名称包含2026或Fashion的
+                return product.name.includes('2026') || product.name.includes('Fashion')
+              } else {
+                // 其他分类：根据产品分类或名称匹配
+                const categoryNames = [category.name, category.nameDB, category.nameCN]
+                return categoryNames.some(catName => 
+                  product.category === catName || 
+                  product.name.toLowerCase().includes(catName.toLowerCase()) ||
+                  (catName === 'Handbags' && (product.category === 'Handbags' || product.name.includes('Bag'))) ||
+                  (catName === 'Tote Bags' && product.name.includes('Tote')) ||
+                  (catName === 'Shoulder Bags' && product.name.includes('Shoulder')) ||
+                  (catName === 'Crossbody Bags' && product.name.includes('Crossbody')) ||
+                  (catName === 'Backpacks' && product.name.includes('Backpack')) ||
+                  (catName === 'Wallets' && product.name.includes('Wallet'))
+                )
+              }
+            })
+          }
         }
-        setLoading(false)
-      })
-      .catch(err => {
+        
+        // 限制显示数量为8个
+        setProducts(filteredProducts.slice(0, 8))
+      } catch (err) {
         console.error('Failed to fetch products:', err)
+        setProducts([])
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    loadProducts()
   }, [selectedCategory, i18n.language])
 
   return (

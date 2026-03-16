@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "name": "foreign-trade-platform",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    },
+    {
+      "src": "backend/package.json",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["database/**"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/src/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "backend/src/server.js": {
+      "maxDuration": 30
+    }
+  }
+}

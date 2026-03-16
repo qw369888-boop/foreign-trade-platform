@@ -10,6 +10,7 @@ export default function OrdersManagement() {
   const [orders, setOrders] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [dateRange, setDateRange] = useState({ start: '', end: '' })
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) {
@@ -21,16 +22,31 @@ export default function OrdersManagement() {
     fetchOrders()
   }, [])
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (startDate = '', endDate = '') => {
     try {
-      const response = await fetch('http://localhost:4000/api/admin/orders', {
+      let url = 'http://localhost:4000/api/admin/orders'
+      const params = new URLSearchParams()
+      
+      if (startDate && endDate) {
+        params.append('start_date', startDate)
+        params.append('end_date', endDate)
+      } else if (startDate) {
+        // 如果只有开始日期，就查询这一天的数据
+        params.append('date', startDate)
+      }
+      
+      if (params.toString()) {
+        url += '?' + params.toString()
+      }
+      
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       })
       const data = await response.json()
       if (data.success) {
-        setOrders(data.orders)
+        setOrders(data.orders || [])
       }
     } catch (error) {
       console.error('Failed to fetch orders:', error)
@@ -117,7 +133,7 @@ export default function OrdersManagement() {
       {/* Content */}
       <div className="container mx-auto px-4 py-8">
         {/* Toolbar */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -128,6 +144,37 @@ export default function OrdersManagement() {
               className="w-full pl-10 pr-4 py-2 bg-dark-800 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-blue"
             />
           </div>
+          
+          {/* 日期范围筛选器 */}
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 mb-1">开始日期</label>
+              <input
+                type="date"
+                value={dateRange.start}
+                onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                className="px-3 py-2 bg-dark-800 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-blue text-sm"
+              />
+            </div>
+            
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 mb-1">结束日期</label>
+              <input
+                type="date"
+                value={dateRange.end}
+                onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                className="px-3 py-2 bg-dark-800 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-blue text-sm"
+              />
+            </div>
+            
+            <button
+              onClick={() => fetchOrders(dateRange.start, dateRange.end)}
+              className="mt-5 px-4 py-2 bg-neon-blue hover:bg-neon-blue/80 text-white rounded-lg transition-all font-medium"
+            >
+              查询
+            </button>
+          </div>
+          
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
@@ -141,6 +188,18 @@ export default function OrdersManagement() {
             <option value="cancelled">已取消</option>
             <option value="refunded">已退款</option>
           </select>
+          
+          <button
+            onClick={() => {
+              setDateRange({ start: '', end: '' })
+              setSearchTerm('')
+              setFilterStatus('all')
+              fetchOrders()
+            }}
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-all font-medium"
+          >
+            重置
+          </button>
         </div>
 
         {/* Orders Table */}
