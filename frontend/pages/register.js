@@ -2,14 +2,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '../components/Layout'
 import { motion } from 'framer-motion'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import Link from 'next/link'
 
 export default function Register() {
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const isZh = router.asPath.startsWith('/zh')
   const { register } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
@@ -22,17 +20,35 @@ export default function Register() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const text = {
+    register: isZh ? '注册' : 'Register',
+    register_subtitle: isZh ? '创建您的账户' : 'Create your account',
+    first_name: isZh ? '名字' : 'First Name',
+    last_name: isZh ? '姓氏' : 'Last Name',
+    email: isZh ? '邮箱' : 'Email',
+    phone: isZh ? '电话' : 'Phone',
+    optional: isZh ? '可选' : 'Optional',
+    password: isZh ? '密码' : 'Password',
+    password_hint: isZh ? '至少6个字符' : 'At least 6 characters',
+    confirm_password: isZh ? '确认密码' : 'Confirm Password',
+    registering: isZh ? '创建账户中...' : 'Creating account...',
+    have_account: isZh ? '已有账户？' : 'Already have an account?',
+    login: isZh ? '登录' : 'Login',
+    passwords_not_match: isZh ? '密码不匹配' : 'Passwords do not match',
+    password_too_short: isZh ? '密码至少需要6个字符' : 'Password must be at least 6 characters'
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError(text.passwords_not_match)
       return
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError(text.password_too_short)
       return
     }
 
@@ -47,7 +63,7 @@ export default function Register() {
     })
 
     if (result.success) {
-      router.push('/')
+      router.push(isZh ? '/zh' : '/')
     } else {
       setError(result.error)
     }
@@ -65,10 +81,10 @@ export default function Register() {
           >
             <div className="glass-strong rounded-3xl p-8 border border-white/10">
               <h1 className="text-3xl font-bold text-white mb-2 text-center">
-                <span className="gradient-text">{t('auth.register') || 'Register'}</span>
+                <span className="gradient-text">{text.register}</span>
               </h1>
               <p className="text-gray-400 text-center mb-8">
-                {t('auth.register_subtitle') || 'Create your account'}
+                {text.register_subtitle}
               </p>
 
               {error && (
@@ -81,7 +97,7 @@ export default function Register() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-300 mb-2">
-                      {t('auth.first_name') || 'First Name'}
+                      {text.first_name}
                     </label>
                     <input
                       type="text"
@@ -93,7 +109,7 @@ export default function Register() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-300 mb-2">
-                      {t('auth.last_name') || 'Last Name'}
+                      {text.last_name}
                     </label>
                     <input
                       type="text"
@@ -107,7 +123,7 @@ export default function Register() {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2">
-                    {t('auth.email') || 'Email'}
+                    {text.email}
                   </label>
                   <input
                     type="email"
@@ -121,7 +137,7 @@ export default function Register() {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2">
-                    {t('auth.phone') || 'Phone'} ({t('auth.optional') || 'Optional'})
+                    {text.phone} ({text.optional})
                   </label>
                   <input
                     type="tel"
@@ -133,7 +149,7 @@ export default function Register() {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2">
-                    {t('auth.password') || 'Password'}
+                    {text.password}
                   </label>
                   <input
                     type="password"
@@ -144,13 +160,13 @@ export default function Register() {
                     placeholder="••••••••"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    {t('auth.password_hint') || 'At least 6 characters'}
+                    {text.password_hint}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2">
-                    {t('auth.confirm_password') || 'Confirm Password'}
+                    {text.confirm_password}
                   </label>
                   <input
                     type="password"
@@ -167,15 +183,15 @@ export default function Register() {
                   disabled={loading}
                   className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? (t('auth.registering') || 'Creating account...') : (t('auth.register') || 'Register')}
+                  {loading ? text.registering : text.register}
                 </button>
               </form>
 
               <div className="mt-6 text-center">
                 <p className="text-gray-400">
-                  {t('auth.have_account') || 'Already have an account?'}{' '}
-                  <Link href="/login" className="text-neon-blue hover:text-neon-purple transition-colors">
-                    {t('auth.login') || 'Login'}
+                  {text.have_account}{' '}
+                  <Link href={isZh ? "/zh/login" : "/login"} className="text-neon-blue hover:text-neon-purple transition-colors">
+                    {text.login}
                   </Link>
                 </p>
               </div>
@@ -185,12 +201,4 @@ export default function Register() {
       </div>
     </Layout>
   )
-}
-
-export async function getStaticProps({ locale = 'en' }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  }
 }

@@ -2,18 +2,37 @@ import Layout from '../components/Layout'
 import { FiX, FiMinus, FiPlus, FiShoppingBag, FiTrash2 } from 'react-icons/fi'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
 import { useCart } from '../contexts/CartContext'
 
 export default function Cart() {
-  const { t } = useTranslation('common')
+  const router = useRouter()
+  const isZh = router.asPath.startsWith('/zh')
   const { cartItems, removeFromCart, updateQuantity } = useCart()
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const shipping = subtotal > 100 ? 0 : 15
   const tax = subtotal * 0.1
   const total = subtotal + shipping + tax
+
+  const text = {
+    title: isZh ? '购物车' : 'Shopping Cart',
+    item_count: isZh ? '件商品' : 'item',
+    items_count: isZh ? '件商品' : 'items',
+    empty_title: isZh ? '购物车为空' : 'Your cart is empty',
+    empty_message: isZh ? '还没有添加任何商品到购物车' : 'You haven\'t added any items to your cart yet',
+    continue_shopping: isZh ? '继续购物' : 'Continue Shopping',
+    remove_item: isZh ? '移除商品' : 'Remove item',
+    subtotal: isZh ? '小计' : 'Subtotal',
+    order_summary: isZh ? '订单摘要' : 'Order Summary',
+    shipping: isZh ? '运费' : 'Shipping',
+    free_shipping: isZh ? '免运费' : 'Free',
+    tax: isZh ? '税费' : 'Tax',
+    total: isZh ? '总计' : 'Total',
+    free_shipping_tip: isZh ? '再购买' : 'Add',
+    free_shipping_tip_end: isZh ? '即可享受免运费' : 'more for free shipping',
+    proceed_checkout: isZh ? '去结账' : 'Proceed to Checkout'
+  }
 
   return (
     <Layout>
@@ -29,10 +48,10 @@ export default function Cart() {
             className="max-w-4xl mx-auto text-center"
           >
             <h1 className="text-5xl sm:text-6xl font-bold mb-4">
-              <span className="gradient-text">{t('cart.title')}</span>
+              <span className="gradient-text">{text.title}</span>
             </h1>
             <p className="text-xl text-gray-300">
-              {cartItems.length} {cartItems.length === 1 ? t('cart.item_count') : t('cart.items_count')}
+              {cartItems.length} {cartItems.length === 1 ? text.item_count : text.items_count}
             </p>
           </motion.div>
         </div>
@@ -51,11 +70,11 @@ export default function Cart() {
             >
               <div className="glass-strong rounded-3xl p-12 max-w-2xl mx-auto border border-white/10">
                 <FiShoppingBag className="w-24 h-24 mx-auto text-neon-blue mb-6" />
-                <h2 className="text-3xl font-bold text-white mb-4">{t('cart.empty_title')}</h2>
-                <p className="text-gray-400 mb-8 text-lg">{t('cart.empty_message')}</p>
-                <Link href="/products">
+                <h2 className="text-3xl font-bold text-white mb-4">{text.empty_title}</h2>
+                <p className="text-gray-400 mb-8 text-lg">{text.empty_message}</p>
+                <Link href={isZh ? "/zh/products" : "/products"}>
                   <button className="btn-primary btn-glow">
-                    {t('cart.continue_shopping')}
+                    {text.continue_shopping}
                   </button>
                 </Link>
               </div>
@@ -75,7 +94,7 @@ export default function Cart() {
                         transition={{ delay: index * 0.1 }}
                         className="flex gap-6 p-6 border-b border-white/10 last:border-b-0 hover:bg-white/5 transition-all group"
                       >
-                        <Link href={`/products/${item.id}`} className="relative flex-shrink-0">
+                        <Link href={`${isZh ? '/zh' : ''}/products/${item.id}`} className="relative flex-shrink-0">
                           <div className="w-28 h-28 rounded-xl bg-white overflow-hidden ring-2 ring-white/10 group-hover:ring-neon-blue/50 transition-all">
                             <img
                               src={Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : '/placeholder.jpg'}
@@ -94,7 +113,7 @@ export default function Cart() {
                             <button
                               onClick={() => removeFromCart(item.id)}
                               className="ml-4 p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
-                              title={t('cart.remove_item')}
+                              title={text.remove_item}
                             >
                               <FiTrash2 className="w-5 h-5" />
                             </button>
@@ -108,7 +127,6 @@ export default function Cart() {
                             <div className="flex items-center glass-strong rounded-xl border border-white/10 overflow-hidden">
                               <button
                                 onClick={() => {
-                                  // 解析 MOQ：如果是字符串 "100 Pieces"，提取数字；如果是数字，直接使用
                                   let moq = 1
                                   if (item.moq) {
                                     if (typeof item.moq === 'string') {
@@ -124,7 +142,6 @@ export default function Cart() {
                                   }
                                 }}
                                 disabled={(() => {
-                                  // 解析 MOQ 用于 disabled 判断
                                   let moq = 1
                                   if (item.moq) {
                                     if (typeof item.moq === 'string') {
@@ -146,14 +163,12 @@ export default function Cart() {
                                 key={item.quantity}
                                 onChange={(e) => {
                                   const value = e.target.value
-                                  // 只允许输入数字
                                   if (value !== '' && !/^\d+$/.test(value)) {
                                     e.target.value = item.quantity
                                     return
                                   }
                                 }}
                                 onBlur={(e) => {
-                                  // 失去焦点时验证并更新
                                   const value = e.target.value
                                   let moq = 1
                                   if (item.moq) {
@@ -173,7 +188,6 @@ export default function Cart() {
                                   }
                                 }}
                                 onKeyDown={(e) => {
-                                  // 按回车时触发失去焦点
                                   if (e.key === 'Enter') {
                                     e.target.blur()
                                   }
@@ -193,7 +207,7 @@ export default function Cart() {
                               </div>
                             )}
                             <div className="text-gray-400">
-                              {t('cart.subtotal')}: <span className="font-bold text-white ml-2">
+                              {text.subtotal}: <span className="font-bold text-white ml-2">
                                 ${(item.price * item.quantity).toFixed(2)}
                               </span>
                             </div>
@@ -214,31 +228,31 @@ export default function Cart() {
                   className="glass-strong rounded-3xl p-8 border border-white/10 sticky top-24"
                 >
                   <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                    <span className="gradient-text">{t('cart.order_summary')}</span>
+                    <span className="gradient-text">{text.order_summary}</span>
                   </h2>
                   
                   <div className="space-y-4 mb-6">
                     <div className="flex justify-between text-gray-400">
-                      <span>{t('cart.subtotal')}</span>
+                      <span>{text.subtotal}</span>
                       <span className="font-semibold text-white">${subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-gray-400">
-                      <span>{t('cart.shipping')}</span>
+                      <span>{text.shipping}</span>
                       <span className="font-semibold text-white">
                         {shipping === 0 ? (
-                          <span className="text-green-400">{t('cart.free_shipping')}</span>
+                          <span className="text-green-400">{text.free_shipping}</span>
                         ) : (
                           `$${shipping.toFixed(2)}`
                         )}
                       </span>
                     </div>
                     <div className="flex justify-between text-gray-400">
-                      <span>{t('cart.tax')} (10%)</span>
+                      <span>{text.tax} (10%)</span>
                       <span className="font-semibold text-white">${tax.toFixed(2)}</span>
                     </div>
                     <div className="border-t border-white/10 pt-4 mt-4">
                       <div className="flex justify-between text-xl font-bold">
-                        <span className="text-white">{t('cart.total')}</span>
+                        <span className="text-white">{text.total}</span>
                         <span className="gradient-text text-2xl">${total.toFixed(2)}</span>
                       </div>
                     </div>
@@ -247,20 +261,20 @@ export default function Cart() {
                   {subtotal < 100 && (
                     <div className="glass-strong rounded-xl p-4 mb-6 border border-blue-500/30 bg-blue-500/10">
                       <p className="text-sm text-blue-300">
-                        💡 {t('cart.free_shipping_tip')} <span className="font-bold text-blue-400">${(100 - subtotal).toFixed(2)}</span> {t('cart.free_shipping_tip_end')}
+                        💡 {text.free_shipping_tip} <span className="font-bold text-blue-400">${(100 - subtotal).toFixed(2)}</span> {text.free_shipping_tip_end}
                       </p>
                     </div>
                   )}
 
-                  <Link href="/checkout">
+                  <Link href={isZh ? "/zh/checkout" : "/checkout"}>
                     <button className="w-full btn-primary btn-glow mb-3 py-4 text-lg">
-                      {t('cart.proceed_checkout')}
+                      {text.proceed_checkout}
                     </button>
                   </Link>
                   
-                  <Link href="/products">
+                  <Link href={isZh ? "/zh/products" : "/products"}>
                     <button className="w-full glass-strong border border-white/10 hover:border-white/20 text-white py-4 rounded-xl transition-all">
-                      {t('cart.continue_shopping')}
+                      {text.continue_shopping}
                     </button>
                   </Link>
                 </motion.div>
@@ -271,12 +285,4 @@ export default function Cart() {
       </section>
     </Layout>
   )
-}
-
-export async function getStaticProps({ locale = 'en' }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  }
 }

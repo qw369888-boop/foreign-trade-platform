@@ -3,15 +3,25 @@ import { useRouter } from 'next/router'
 import Layout from '../components/Layout'
 import { FiCheckCircle, FiPackage, FiMail } from 'react-icons/fi'
 import { motion } from 'framer-motion'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 
 export default function OrderSuccess() {
   const router = useRouter()
   const { orderId } = router.query
-  const { t } = useTranslation('common')
+  const isZh = router.asPath.startsWith('/zh')
   const [order, setOrder] = useState(null)
+
+  const text = {
+    title: isZh ? '订单提交成功！' : 'Order Placed Successfully!',
+    subtitle: isZh ? '感谢您的购买' : 'Thank you for your purchase',
+    order_id: isZh ? '订单号' : 'Order ID',
+    email_sent: isZh ? '确认邮件' : 'Confirmation Email',
+    email_desc: isZh ? '请查看您的邮箱获取订单详情' : 'Check your inbox for order details',
+    processing: isZh ? '订单处理中' : 'Order Processing',
+    processing_desc: isZh ? '我们将尽快发货' : 'We\'ll ship your order soon',
+    continue_shopping: isZh ? '继续购物' : 'Continue Shopping',
+    back_home: isZh ? '返回首页' : 'Back to Home'
+  }
 
   useEffect(() => {
     if (orderId) {
@@ -42,17 +52,17 @@ export default function OrderSuccess() {
               </motion.div>
 
               <h1 className="text-4xl font-bold text-white mb-4">
-                {t('order_success.title') || 'Order Placed Successfully!'}
+                {text.title}
               </h1>
               
               <p className="text-xl text-gray-300 mb-8">
-                {t('order_success.subtitle') || 'Thank you for your purchase'}
+                {text.subtitle}
               </p>
 
               {orderId && (
                 <div className="glass-strong rounded-xl p-6 mb-8 border border-white/10">
                   <p className="text-sm text-gray-400 mb-2">
-                    {t('order_success.order_id') || 'Order ID'}
+                    {text.order_id}
                   </p>
                   <p className="text-2xl font-bold gradient-text">#{orderId}</p>
                 </div>
@@ -62,33 +72,33 @@ export default function OrderSuccess() {
                 <div className="glass-strong rounded-xl p-6 border border-white/10">
                   <FiMail className="w-8 h-8 text-neon-blue mx-auto mb-3" />
                   <h3 className="font-semibold text-white mb-2">
-                    {t('order_success.email_sent') || 'Confirmation Email'}
+                    {text.email_sent}
                   </h3>
                   <p className="text-sm text-gray-400">
-                    {t('order_success.email_desc') || 'Check your inbox for order details'}
+                    {text.email_desc}
                   </p>
                 </div>
 
                 <div className="glass-strong rounded-xl p-6 border border-white/10">
                   <FiPackage className="w-8 h-8 text-neon-purple mx-auto mb-3" />
                   <h3 className="font-semibold text-white mb-2">
-                    {t('order_success.processing') || 'Order Processing'}
+                    {text.processing}
                   </h3>
                   <p className="text-sm text-gray-400">
-                    {t('order_success.processing_desc') || 'We\'ll ship your order soon'}
+                    {text.processing_desc}
                   </p>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/products">
+                <Link href={isZh ? "/zh/products" : "/products"}>
                   <button className="btn-primary">
-                    {t('order_success.continue_shopping') || 'Continue Shopping'}
+                    {text.continue_shopping}
                   </button>
                 </Link>
-                <Link href="/">
+                <Link href={isZh ? "/zh" : "/"}>
                   <button className="glass-strong border border-white/10 hover:border-white/20 text-white py-3 px-8 rounded-xl transition-all">
-                    {t('order_success.back_home') || 'Back to Home'}
+                    {text.back_home}
                   </button>
                 </Link>
               </div>
@@ -98,12 +108,4 @@ export default function OrderSuccess() {
       </div>
     </Layout>
   )
-}
-
-export async function getStaticProps({ locale = 'en' }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  }
 }
