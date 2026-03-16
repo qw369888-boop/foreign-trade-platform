@@ -4,14 +4,32 @@ import { ShoppingCart, CreditCard, Truck, User } from 'lucide-react';
 import AddressForm from '../components/AddressForm';
 import TaxDisplay from '../components/TaxDisplay';
 import { useCart } from '../contexts/CartContext';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const CheckoutPage = () => {
   const router = useRouter();
-  const { t } = useTranslation('common');
   const { cartItems, addToCart, isLoaded } = useCart();
   const [loading, setLoading] = useState(true);
+
+  // 静态文本
+  const text = {
+    title: '结账',
+    subtitle: '完成您的订单信息',
+    customer_info: '客户信息',
+    shipping_address: '配送地址',
+    order_summary: '订单摘要',
+    first_name: '名字',
+    last_name: '姓氏',
+    email: '邮箱',
+    phone: '电话',
+    individual_customer: '个人客户',
+    business_customer: '企业客户',
+    customer_type: '客户类型',
+    pay_now: '立即支付',
+    secure_payment: '安全支付保障',
+    loading: '加载中...',
+    empty_cart: '购物车为空',
+    continue_shopping: '继续购物'
+  };
 
   const [shippingAddress, setShippingAddress] = useState({});
   const [taxData, setTaxData] = useState(null);
@@ -27,19 +45,15 @@ const CheckoutPage = () => {
     const handleDirectPurchase = async () => {
       const { product: productId } = router.query;
       
-      // 等待购物车数据加载完成
       if (!isLoaded) return;
       
       if (productId && cartItems.length === 0) {
         try {
-          console.log('🛒 Direct purchase - fetching product:', productId);
-          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-          const response = await fetch(`${baseUrl}/api/products/${productId}`);
-          const data = await response.json();
+          const response = await fetch('/data/products.json');
+          const allProducts = await response.json();
+          const product = allProducts.find(p => p.id.toString() === productId.toString());
           
-          if (data.success && data.data) {
-            const product = data.data;
-            // 解析 MOQ
+          if (product) {
             let quantity = 1;
             if (product.moq) {
               if (typeof product.moq === 'string') {
@@ -49,26 +63,25 @@ const CheckoutPage = () => {
                 quantity = product.moq;
               }
             }
-            
-            console.log('🛒 Direct purchase - adding to cart:', { product, quantity });
             addToCart(product, quantity);
           }
         } catch (error) {
-          console.error('Failed to fetch product for direct purchase:', error);
+          console.error('Failed to fetch product:', error);
         }
       }
+      
       setLoading(false);
     };
 
-    // 只有当路由准备好且购物车数据加载完成时才执行
-    if (router.isReady && isLoaded) {
-      handleDirectPurchase();
-    }
-  }, [router.isReady, router.query, cartItems.length, addToCart, isLoaded]);
+    handleDirectPurchase();
+  }, [router.query, isLoaded, cartItems.length, addToCart]);
 
-  // 计算小计
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = 15.99;
+  const handleCustomerInfoChange = (field, value) => {
+    setCustomerInfo(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   const handleAddressChange = (address) => {
     setShippingAddress(address);
@@ -78,60 +91,45 @@ const CheckoutPage = () => {
     setTaxData(tax);
   };
 
-  const handleCustomerInfoChange = (field, value) => {
-    setCustomerInfo(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const total = subtotal + shipping + (taxData?.taxAmount || 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = subtotal > 100 ? 0 : 15.99;
+  const tax = taxData ? taxData.amount : subtotal * 0.1;
+  const total = subtotal + shipping + tax;
 
   const isFormValid = () => {
-    return (
-      cartItems.length > 0 &&
-      customerInfo.firstName &&
-      customerInfo.lastName &&
-      customerInfo.email &&
-      shippingAddress.country &&
-      shippingAddress.city &&
-      shippingAddress.zipCode &&
-      shippingAddress.street &&
-      (shippingAddress.country !== 'US' || shippingAddress.state)
-    );
+    return customerInfo.firstName && 
+           customerInfo.lastName && 
+           customerInfo.email && 
+           customerInfo.phone &&
+           shippingAddress.country &&
+           shippingAddress.city &&
+           shippingAddress.postalCode &&
+           shippingAddress.address;
   };
 
-  // 如果还在加载中或购物车数据未加载完成，显示加载状态
-  if (loading || !isLoaded) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-block w-12 h-12 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('checkout.loading') || 'Loading...'}</h1>
-            <p className="text-gray-600">{t('checkout.preparing_order') || 'Preparing your order'}</p>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{text.loading}</h1>
+          <p className="text-gray-600">正在准备您的订单</p>
         </div>
       </div>
     );
   }
 
-  // 如果购物车为空，显示提示
-  if (cartItems.length === 0) {
+  if (!isLoaded || cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('checkout.empty_cart') || 'Cart is empty'}</h1>
-            <p className="text-gray-600 mb-6">{t('checkout.add_products_first') || 'Please add products to cart before checkout'}</p>
-            <a
-              href="/products"
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              {t('checkout.continue_shopping') || 'Continue Shopping'}
-            </a>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{text.empty_cart}</h1>
+          <p className="text-gray-600 mb-6">请先添加商品到购物车再进行结账</p>
+          <button 
+            onClick={() => router.push('/products')}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {text.continue_shopping}
+          </button>
         </div>
       </div>
     );
@@ -140,71 +138,71 @@ const CheckoutPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">{t('checkout.title') || 'Checkout'}</h1>
-          <p className="text-gray-600 mt-2">{t('checkout.subtitle') || 'Complete your order information'}</p>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">{text.title}</h1>
+          <p className="text-gray-600 mt-2">{text.subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* 左侧 - 客户信息和配送地址 */}
+          {/* 左侧 - 表单 */}
           <div className="space-y-6">
             {/* 客户信息 */}
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center gap-2 mb-4">
                 <User className="w-5 h-5 text-blue-600" />
-                <h2 className="text-xl font-bold text-gray-900">{t('checkout.customer_info') || 'Customer Information'}</h2>
+                <h2 className="text-xl font-bold text-gray-900">{text.customer_info}</h2>
               </div>
-
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('checkout.first_name') || 'First Name'} *
+                    {text.first_name} *
                   </label>
                   <input
                     type="text"
                     value={customerInfo.firstName}
                     onChange={(e) => handleCustomerInfoChange('firstName', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder={t('checkout.enter_first_name') || 'Enter first name'}
+                    placeholder="输入名字"
                     required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('checkout.last_name') || 'Last Name'} *
+                    {text.last_name} *
                   </label>
                   <input
                     type="text"
                     value={customerInfo.lastName}
                     onChange={(e) => handleCustomerInfoChange('lastName', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder={t('checkout.enter_last_name') || 'Enter last name'}
+                    placeholder="输入姓氏"
                     required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('checkout.email') || 'Email'} *
+                    {text.email} *
                   </label>
                   <input
                     type="email"
                     value={customerInfo.email}
                     onChange={(e) => handleCustomerInfoChange('email', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder={t('checkout.enter_email') || 'Enter email address'}
+                    placeholder="输入邮箱地址"
                     required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('checkout.phone') || 'Phone'} *
+                    {text.phone} *
                   </label>
                   <input
                     type="tel"
                     value={customerInfo.phone}
                     onChange={(e) => handleCustomerInfoChange('phone', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder={t('checkout.enter_phone') || 'Enter phone number'}
+                    placeholder="输入电话号码"
                     required
                   />
                 </div>
@@ -215,7 +213,7 @@ const CheckoutPage = () => {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Truck className="w-5 h-5 text-blue-600" />
-                <h2 className="text-xl font-bold text-gray-900">{t('checkout.shipping_address') || 'Shipping Address'}</h2>
+                <h2 className="text-xl font-bold text-gray-900">{text.shipping_address}</h2>
               </div>
 
               <AddressForm
@@ -232,27 +230,24 @@ const CheckoutPage = () => {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center gap-2 mb-4">
                 <ShoppingCart className="w-5 h-5 text-blue-600" />
-                <h2 className="text-xl font-bold text-gray-900">{t('checkout.order_summary') || 'Order Summary'}</h2>
+                <h2 className="text-xl font-bold text-gray-900">{text.order_summary}</h2>
               </div>
-
+              
               <div className="space-y-4">
-                {cartItems.map(item => (
-                  <div key={item.id} className="flex items-center gap-4 py-3 border-b border-gray-200 last:border-b-0">
-                    <img
-                      src={item.images && item.images.length > 0 ? item.images[0] : "/api/placeholder/100/100"}
+                {cartItems.map((item) => (
+                  <div key={item.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                    <img 
+                      src={item.images?.[0] || '/placeholder.jpg'} 
                       alt={item.name}
-                      className="w-16 h-16 object-cover rounded-md"
-                      onError={(e) => {
-                        e.target.src = "/api/placeholder/100/100";
-                      }}
+                      className="w-16 h-16 object-cover rounded"
                     />
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900">{item.name}</h3>
-                      <p className="text-sm text-gray-500">{t('checkout.quantity') || 'Quantity'}: {item.quantity}</p>
+                      <p className="text-sm text-gray-500">数量: {item.quantity}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
-                      <p className="text-sm text-gray-500">${item.price.toFixed(2)} {t('checkout.per_item') || 'per item'}</p>
+                      <p className="font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="text-sm text-gray-500">${item.price.toFixed(2)} 每件</p>
                     </div>
                   </div>
                 ))}
@@ -261,83 +256,54 @@ const CheckoutPage = () => {
 
             {/* 费用明细 */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">{t('checkout.cost_breakdown') || 'Cost Breakdown'}</h3>
-              
+              <h3 className="text-lg font-bold text-gray-900 mb-4">费用明细</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('checkout.subtotal') || 'Subtotal'}:</span>
+                  <span className="text-gray-600">商品小计:</span>
                   <span className="font-medium">${subtotal.toFixed(2)}</span>
                 </div>
-                
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('checkout.shipping') || 'Shipping'}:</span>
-                  <span className="font-medium">${shipping.toFixed(2)}</span>
+                  <span className="text-gray-600">运费:</span>
+                  <span className="font-medium">{shipping === 0 ? '免运费' : `$${shipping.toFixed(2)}`}</span>
                 </div>
-
-                {/* 税费显示 */}
-                {shippingAddress.country && (
-                  <TaxDisplay
-                    subtotal={subtotal}
-                    country={shippingAddress.country}
-                    state={shippingAddress.state}
-                    customerType={shippingAddress.customerType}
-                    taxId={shippingAddress.taxId}
-                    onTaxChange={handleTaxCalculated}
-                    compact={true}
-                  />
-                )}
-
+                <TaxDisplay taxData={taxData} />
                 <div className="border-t pt-3">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>{t('checkout.total') || 'Total'}:</span>
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>总计:</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
                 </div>
-
-                {/* 税费说明 */}
-                {taxData && (
-                  <div className="text-xs text-gray-500 mt-2 p-2 bg-gray-50 rounded">
-                    <p>{taxData.message}</p>
-                    {taxData.note && (
-                      <p className="mt-1">{taxData.note}</p>
-                    )}
-                  </div>
-                )}
               </div>
-            </div>
 
-            {/* 支付按钮 */}
-            <div className="bg-white rounded-lg shadow p-6">
               <button
                 disabled={!isFormValid()}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
+                className="w-full mt-6 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 <CreditCard className="w-5 h-5" />
-                {t('checkout.pay_now') || 'Pay Now'} ${total.toFixed(2)}
+                {text.pay_now} ${total.toFixed(2)}
               </button>
               
-              <p className="text-xs text-gray-500 text-center mt-2">
-                {t('checkout.terms_agreement') || 'By clicking pay, you agree to our terms of service and privacy policy'}
+              <p className="text-xs text-gray-500 text-center mt-3">
+                点击支付即表示您同意我们的服务条款和隐私政策
               </p>
-
-              {/* 表单验证提示 */}
+              
               {!isFormValid() && (
-                <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
-                  {t('checkout.complete_required_fields') || 'Please complete all required fields before payment'}
-                </div>
+                <p className="text-xs text-red-500 text-center mt-2">
+                  请完善所有必填信息后再进行支付
+                </p>
               )}
             </div>
 
-            {/* 安全提示 */}
+            {/* 安全保障 */}
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-green-800 mb-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <div className="flex items-center gap-2 mb-2">
+                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                 </svg>
-                <span className="font-medium text-sm">{t('checkout.secure_payment') || 'Secure Payment'}</span>
+                <span className="font-medium text-sm">{text.secure_payment}</span>
               </div>
               <p className="text-xs text-green-700">
-                {t('checkout.security_message') || 'We use SSL encryption to protect your payment information and support multiple secure payment methods'}
+                我们使用SSL加密技术保护您的支付信息，支持多种安全支付方式
               </p>
             </div>
           </div>
@@ -348,11 +314,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-
-export async function getStaticProps({ locale = 'en' }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  }
-}

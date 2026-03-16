@@ -66,12 +66,15 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         setLoading(true)
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-        const response = await fetch(`${baseUrl}/api/products/${id}`)
-        const data = await response.json()
+        // 使用静态数据文件而不是API
+        const response = await fetch('/data/products.json')
+        const allProducts = await response.json()
         
-        if (data.success && data.data) {
-          setProductData(data.data)
+        // 根据ID查找产品
+        const product = allProducts.find(p => p.id.toString() === id.toString())
+        
+        if (product) {
+          setProductData(product)
           setError(null)
         } else {
           setError('产品未找到')

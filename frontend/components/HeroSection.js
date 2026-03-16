@@ -1,12 +1,10 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import Image from 'next/image'
 
 export default function HeroSection() {
-  const { t } = useTranslation('common')
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -19,7 +17,20 @@ export default function HeroSection() {
 
   const [displayText, setDisplayText] = useState('')
   const [mounted, setMounted] = useState(false)
-  const fullText = t('hero.title') || 'Professional Handbag Manufacturer'
+  
+  // 静态文本替代翻译
+  const heroText = {
+    title: 'Professional Handbag Manufacturer',
+    subtitle: 'OEM & ODM Since 1992',
+    description: 'High Quality Leather Bags Supplier for Professional Brands Worldwide',
+    cta_primary: 'View Products',
+    cta_secondary: 'Contact Us',
+    stat1: 'Years Experience',
+    stat2: 'Countries',
+    stat3: 'Factory Area (㎡)'
+  }
+  
+  const fullText = heroText.title
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
@@ -121,7 +132,7 @@ export default function HeroSection() {
                 transition={{ duration: 0.8, delay: 0.8 }}
                 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-300"
               >
-                {t('hero.subtitle') || 'OEM & ODM Since 1992'}
+                {heroText.subtitle}
               </motion.p>
             </div>
 
@@ -133,7 +144,7 @@ export default function HeroSection() {
               className="max-w-xl"
             >
               <p className="text-lg sm:text-xl text-gray-400 leading-relaxed">
-                {t('company.description') || 'High Quality Leather Bags Supplier for Professional Brands Worldwide'}
+                {heroText.description}
               </p>
             </motion.div>
 
@@ -151,7 +162,7 @@ export default function HeroSection() {
                   className="btn-primary btn-glow group relative overflow-hidden px-10 py-5 text-lg font-semibold"
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    {t('hero.cta_primary') || 'View Products'}
+                    {heroText.cta_primary}
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
@@ -168,7 +179,7 @@ export default function HeroSection() {
                   whileTap={{ scale: 0.95 }}
                   className="px-10 py-5 text-lg rounded-full font-semibold glass-strong hover:glass border-2 border-white/20 hover:border-neon-blue/50 transition-all duration-300"
                 >
-                  {t('hero.cta_secondary') || 'Contact Us'}
+                  {heroText.cta_secondary}
                 </motion.button>
               </Link>
             </motion.div>
@@ -180,9 +191,9 @@ export default function HeroSection() {
               transition={{ duration: 0.8, delay: 1.4 }}
               className="flex flex-wrap gap-8 pt-8"
             >
-              <StatItem number="30+" label={t('hero.stat1') || 'Years'} />
-              <StatItem number="56" label={t('hero.stat2') || 'Countries'} />
-              <StatItem number="5000+" label={t('hero.stat3') || 'Factory (㎡)'} />
+              <StatItem number="30+" label={heroText.stat1} />
+              <StatItem number="56" label={heroText.stat2} />
+              <StatItem number="5000+" label={heroText.stat3} />
             </motion.div>
           </motion.div>
 
@@ -220,9 +231,19 @@ export default function HeroSection() {
 
 function StatItem({ number, label }) {
   const [count, setCount] = useState(0)
-  const targetNumber = parseInt(number.replace(/[^0-9]/g, ''))
+  const [mounted, setMounted] = useState(false)
+  
+  // 提取数字部分
+  const targetNumber = parseInt(number.replace(/[^0-9]/g, '')) || 0
+  const suffix = number.replace(/[0-9]/g, '')
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted || targetNumber === 0) return
+
     const duration = 2000
     const steps = 60
     const increment = targetNumber / steps
@@ -239,12 +260,15 @@ function StatItem({ number, label }) {
     }, duration / steps)
 
     return () => clearInterval(timer)
-  }, [targetNumber])
+  }, [targetNumber, mounted])
+
+  // 如果没有挂载或者目标数字为0，直接显示原始数字
+  const displayNumber = mounted && targetNumber > 0 ? count : targetNumber
 
   return (
     <div className="flex items-baseline gap-2">
       <div className="text-4xl sm:text-5xl font-bold gradient-text">
-        {count}{number.replace(/[0-9]/g, '')}
+        {displayNumber}{suffix}
       </div>
       <div className="text-sm text-gray-400">{label}</div>
     </div>

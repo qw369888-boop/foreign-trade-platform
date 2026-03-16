@@ -1,7 +1,6 @@
 'use client'
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useCart } from '../contexts/CartContext'
@@ -23,12 +22,23 @@ const getCategoryKey = (category) => {
 }
 
 export default function FeaturedProducts() {
-  const { t, i18n } = useTranslation('common')
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
+
+  // 静态文本替代翻译
+  const featuredText = {
+    title: 'Featured Products',
+    subtitle: 'Premium quality handbags, leading fashion trends',
+    all_products: 'All Products',
+    add_to_cart: 'Add to Cart',
+    buy_now: 'Buy Now',
+    moq: 'MOQ',
+    pieces: 'pieces',
+    no_products: 'No products available in this category'
+  }
 
   const categories = [
     { name: 'All', nameCN: '全部', nameDB: '', key: 'categories.all' },
@@ -92,7 +102,7 @@ export default function FeaturedProducts() {
     }
 
     loadProducts()
-  }, [selectedCategory, i18n.language])
+  }, [selectedCategory])
 
   return (
     <section ref={ref} className="py-24 relative overflow-hidden">
@@ -122,7 +132,7 @@ export default function FeaturedProducts() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4"
           >
-            <span className="gradient-text">{t('products.title') || 'Featured Products'}</span>
+            <span className="gradient-text">{featuredText.title}</span>
           </motion.h2>
         </motion.div>
 
@@ -155,7 +165,7 @@ export default function FeaturedProducts() {
                     }
                   `}>
                     <span className="block text-base font-semibold">
-                      {t(category.key) || (i18n.language === 'zh' ? category.nameCN : category.name)}
+                      {category.name}
                     </span>
                   </div>
 
@@ -188,11 +198,11 @@ export default function FeaturedProducts() {
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               className="inline-block w-12 h-12 border-4 border-neon-blue/30 border-t-neon-blue rounded-full"
             />
-            <p className="mt-4">{t('products.loading') || '加载中...'}</p>
+            <p className="mt-4">加载中...</p>
           </div>
         ) : products.length === 0 ? (
           <div className="text-center text-gray-400 py-20">
-            <p className="text-xl">{t('products.no_products') || '该分类暂无产品'}</p>
+            <p className="text-xl">{featuredText.no_products}</p>
           </div>
         ) : (
           <motion.div
@@ -227,7 +237,7 @@ export default function FeaturedProducts() {
               className="btn-primary btn-glow group"
             >
               <span className="flex items-center gap-2">
-                {t('products.view_all') || 'View All Products'}
+                {featuredText.all_products}
                 <motion.span
                   animate={{ x: [0, 5, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
@@ -244,13 +254,23 @@ export default function FeaturedProducts() {
 }
 
 function ProductCard({ product, index, isInView }) {
-  const { t } = useTranslation('common')
   const router = useRouter()
   const { addToCart } = useCart()
   const [showToast, setShowToast] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
   const images = Array.isArray(product.images) ? product.images : []
   const imageUrl = images.length > 0 ? images[0] : '/placeholder.jpg'
+
+  // 静态文本
+  const productText = {
+    new: 'New',
+    moq: 'MOQ',
+    pieces: 'pieces',
+    add_to_cart: 'Add to Cart',
+    added: 'Added',
+    buy_now: 'Buy Now',
+    added_to_cart: 'Added to Cart'
+  }
 
   const handleAddToCart = (e) => {
     e.preventDefault()
