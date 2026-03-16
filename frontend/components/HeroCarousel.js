@@ -1,105 +1,94 @@
 'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 
 export default function HeroCarousel() {
-  const { t, i18n } = useTranslation('common')
+  const router = useRouter()
+  const isZh = router.asPath.startsWith('/zh')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState(0)
 
   const slides = [
     {
       id: 1,
-      titleKey: 'carousel.slide1_title',
-      subtitleKey: 'carousel.slide1_subtitle',
+      title: isZh ? '2026时尚新品' : '2026 Fashion New Arrivals',
+      subtitle: isZh ? '优质手袋，引领时尚潮流' : 'Premium quality handbags, leading fashion trends',
       image: 'https://sc04.alicdn.com/kf/H982baaae6ee541638277a721b5acb7fdt.jpg',
       color: 'from-pink-500 to-rose-600',
-      link: '/products?category=2026新来者'
+      link: isZh ? '/zh/products?category=2026新来者' : '/products?category=2026新来者'
     },
     {
       id: 2,
-      titleKey: 'carousel.slide2_title',
-      subtitleKey: 'carousel.slide2_subtitle',
+      title: isZh ? '精选手提包系列' : 'Premium Handbag Collection',
+      subtitle: isZh ? '经典设计，卓越品质' : 'Classic design, exceptional quality',
       image: 'https://sc04.alicdn.com/kf/H1f88e15c8cdf4039b23a0fc5822492f8X.jpg',
       color: 'from-purple-500 to-indigo-600',
-      link: '/products?category=手提包'
+      link: isZh ? '/zh/products?category=手提包' : '/products?category=手提包'
     },
     {
       id: 3,
-      titleKey: 'carousel.slide3_title',
-      subtitleKey: 'carousel.slide3_subtitle',
-      image: 'https://sc04.alicdn.com/kf/Hbea1befbf4aa4e9ea3e2073191b32cbfz.jpg',
+      title: isZh ? '专业OEM & ODM服务' : 'Professional OEM & ODM Services',
+      subtitle: isZh ? '30年制造经验，值得信赖' : '30 years of manufacturing excellence, trusted worldwide',
+      image: 'https://sc04.alicdn.com/kf/H6d0c8c7c8b8c4c5f9e2a3b4c5d6e7f8g.jpg',
       color: 'from-blue-500 to-cyan-600',
-      link: '/products?category=肩包'
-    },
-    {
-      id: 4,
-      titleKey: 'carousel.slide4_title',
-      subtitleKey: 'carousel.slide4_subtitle',
-      image: 'https://sc04.alicdn.com/kf/H715c91f9e2b741ce8ff5eb6bae8e9013P.jpg',
-      color: 'from-green-500 to-emerald-600',
-      link: '/products?category=斜挎包'
-    },
-    {
-      id: 5,
-      titleKey: 'carousel.slide5_title',
-      subtitleKey: 'carousel.slide5_subtitle',
-      image: 'https://sc04.alicdn.com/kf/He948805ce22140908f8011dc79d3f26cR.jpg',
-      color: 'from-orange-500 to-red-600',
-      link: '/products?category=热卖'
+      link: isZh ? '/zh/about' : '/about'
     }
   ]
 
   const nextSlide = () => {
     setDirection(1)
-    setCurrentIndex((prev) => (prev + 1) % slides.length)
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length)
   }
 
   const prevSlide = () => {
     setDirection(-1)
-    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length)
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + slides.length) % slides.length)
   }
 
-  // 自动轮播
+  const goToSlide = (index) => {
+    setDirection(index > currentIndex ? 1 : -1)
+    setCurrentIndex(index)
+  }
+
+  // Auto-play functionality
   useEffect(() => {
     const timer = setInterval(() => {
       nextSlide()
-    }, 5000)
+    }, 5000) // Change slide every 5 seconds
+
     return () => clearInterval(timer)
   }, [currentIndex])
 
   const slideVariants = {
     enter: (direction) => ({
       x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.8
+      opacity: 0
     }),
     center: {
+      zIndex: 1,
       x: 0,
-      opacity: 1,
-      scale: 1
+      opacity: 1
     },
     exit: (direction) => ({
+      zIndex: 0,
       x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.8
+      opacity: 0
     })
   }
 
-  return (
-    <section className="relative h-screen w-full overflow-hidden bg-dark-900">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900" />
-      
-      {/* Animated Background Pattern */}
-      <div className="absolute inset-0 cyber-grid opacity-5" />
+  const swipeConfidenceThreshold = 10000
+  const swipePower = (offset, velocity) => {
+    return Math.abs(offset) * velocity
+  }
 
-      {/* Carousel Container */}
-      <div className="relative h-full w-full">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
+  return (
+    <section className="relative h-screen overflow-hidden">
+      {/* Background Slides */}
+      <div className="absolute inset-0">
+        <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={currentIndex}
             custom={direction}
@@ -109,224 +98,170 @@ export default function HeroCarousel() {
             exit="exit"
             transition={{
               x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.5 },
-              scale: { duration: 0.5 }
+              opacity: { duration: 0.2 }
             }}
-            className="absolute inset-0 flex items-center justify-center"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={1}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = swipePower(offset.x, velocity.x)
+
+              if (swipe < -swipeConfidenceThreshold) {
+                nextSlide()
+              } else if (swipe > swipeConfidenceThreshold) {
+                prevSlide()
+              }
+            }}
+            className="absolute inset-0"
           >
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
-                {/* Left Content */}
-                <motion.div
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3, duration: 0.8 }}
-                  className="text-left z-10"
-                >
-                  {/* Title */}
-                  <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
-                    className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4"
-                  >
-                    <span className={`bg-gradient-to-r ${slides[currentIndex].color} bg-clip-text text-transparent`}>
-                      {t(slides[currentIndex].titleKey)}
-                    </span>
-                  </motion.h1>
-
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.6 }}
-                    className="text-2xl sm:text-3xl text-gray-400 mb-6"
-                  >
-                    {t(slides[currentIndex].subtitleKey)}
-                  </motion.p>
-
-                  {/* CTA Button */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7, duration: 0.6 }}
-                  >
-                    <Link href={slides[currentIndex].link}>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-8 py-4 rounded-full font-bold text-white bg-gradient-to-r ${slides[currentIndex].color} shadow-2xl hover:shadow-neon-blue/50 transition-all duration-300 relative overflow-hidden group`}
-                      >
-                        <span className="relative z-10">
-                          {t('hero.cta_primary') || 'Explore Now'}
-                        </span>
-                        <motion.div
-                          className="absolute inset-0 bg-white/20"
-                          initial={{ x: '-100%' }}
-                          whileHover={{ x: '100%' }}
-                          transition={{ duration: 0.6 }}
-                        />
-                      </motion.button>
-                    </Link>
-                  </motion.div>
-
-                  {/* Stats */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                    className="flex gap-8 mt-12"
-                  >
-                    <div>
-                      <div className="text-3xl font-bold text-white">200+</div>
-                      <div className="text-sm text-gray-500">{t('carousel.stat_products')}</div>
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold text-white">30+</div>
-                      <div className="text-sm text-gray-500">{t('carousel.stat_years')}</div>
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold text-white">56</div>
-                      <div className="text-sm text-gray-500">{t('carousel.stat_countries')}</div>
-                    </div>
-                  </motion.div>
-                </motion.div>
-
-                {/* Right Image */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, rotateY: -20 }}
-                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                  transition={{ delay: 0.3, duration: 0.8 }}
-                  className="relative"
-                >
-                  {/* Glow Effect */}
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      opacity: [0.3, 0.5, 0.3]
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className={`absolute inset-0 bg-gradient-to-br ${slides[currentIndex].color} blur-3xl opacity-30 rounded-full`}
-                  />
-
-                  {/* Product Image */}
-                  <motion.div
-                    whileHover={{ scale: 1.05, rotateZ: 2 }}
-                    className="relative z-10 rounded-3xl overflow-hidden shadow-2xl"
-                  >
-                    <div className="aspect-square bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 flex items-center justify-center">
-                      <motion.img
-                        src={slides[currentIndex].image}
-                        alt={slides[currentIndex].title}
-                        className="w-full h-full object-contain"
-                        animate={{
-                          y: [0, -10, 0]
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      />
-                    </div>
-
-                    {/* Shimmer Effect */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                      animate={{
-                        x: ['-100%', '100%']
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatDelay: 3
-                      }}
-                    />
-                  </motion.div>
-
-                  {/* Floating Elements */}
-                  <motion.div
-                    animate={{
-                      y: [0, -20, 0],
-                      rotate: [0, 5, 0]
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-neon-pink/30 to-neon-purple/30 rounded-full blur-2xl"
-                  />
-                  <motion.div
-                    animate={{
-                      y: [0, 20, 0],
-                      rotate: [0, -5, 0]
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1
-                    }}
-                    className="absolute -bottom-10 -left-10 w-40 h-40 bg-gradient-to-br from-neon-blue/30 to-neon-green/30 rounded-full blur-2xl"
-                  />
-                </motion.div>
-              </div>
-            </div>
+            {/* Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url(${slides[currentIndex].image})`
+              }}
+            />
+            
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-dark-900/80 via-dark-900/60 to-transparent" />
+            
+            {/* Gradient Overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${slides[currentIndex].color} opacity-20`} />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Navigation Buttons */}
-      <motion.button
-        whileHover={{ scale: 1.1, x: -5 }}
-        whileTap={{ scale: 0.9 }}
+      {/* Content */}
+      <div className="relative z-10 h-full flex items-center">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -50 }}
+                transition={{ duration: 0.5 }}
+                className="text-white"
+              >
+                <motion.h1 
+                  className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight"
+                  initial={{ opacity: 0, x: -100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                >
+                  <span className="gradient-text">
+                    {slides[currentIndex].title}
+                  </span>
+                </motion.h1>
+                
+                <motion.p 
+                  className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl leading-relaxed"
+                  initial={{ opacity: 0, x: -100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                  {slides[currentIndex].subtitle}
+                </motion.p>
+                
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
+                  className="flex flex-col sm:flex-row gap-4"
+                >
+                  <Link href={slides[currentIndex].link}>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="btn-primary btn-glow px-10 py-5 text-lg font-semibold"
+                    >
+                      {isZh ? '立即查看' : 'Explore Now'}
+                    </motion.button>
+                  </Link>
+                  
+                  <Link href={isZh ? "/zh/contact" : "/contact"}>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-10 py-5 text-lg font-semibold rounded-full glass-strong hover:glass border-2 border-white/20 hover:border-neon-blue/50 transition-all"
+                    >
+                      {isZh ? '联系我们' : 'Contact Us'}
+                    </motion.button>
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Arrows */}
+      <button
         onClick={prevSlide}
-        className="absolute left-8 top-1/2 -translate-y-1/2 z-20 glass-strong rounded-full p-4 border border-white/20 hover:border-neon-blue transition-all duration-300 group"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 p-3 rounded-full glass-strong hover:glass border border-white/20 hover:border-neon-blue/50 transition-all group"
+        aria-label={isZh ? "上一张" : "Previous slide"}
       >
-        <FiChevronLeft className="w-8 h-8 text-white group-hover:text-neon-blue transition-colors" />
-      </motion.button>
-
-      <motion.button
-        whileHover={{ scale: 1.1, x: 5 }}
-        whileTap={{ scale: 0.9 }}
+        <FiChevronLeft className="w-6 h-6 text-white group-hover:text-neon-blue transition-colors" />
+      </button>
+      
+      <button
         onClick={nextSlide}
-        className="absolute right-8 top-1/2 -translate-y-1/2 z-20 glass-strong rounded-full p-4 border border-white/20 hover:border-neon-blue transition-all duration-300 group"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 p-3 rounded-full glass-strong hover:glass border border-white/20 hover:border-neon-blue/50 transition-all group"
+        aria-label={isZh ? "下一张" : "Next slide"}
       >
-        <FiChevronRight className="w-8 h-8 text-white group-hover:text-neon-blue transition-colors" />
-      </motion.button>
+        <FiChevronRight className="w-6 h-6 text-white group-hover:text-neon-blue transition-colors" />
+      </button>
 
-      {/* Dots Indicator */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+      {/* Slide Indicators */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
         {slides.map((_, index) => (
-          <motion.button
+          <button
             key={index}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              setDirection(index > currentIndex ? 1 : -1)
-              setCurrentIndex(index)
-            }}
-            className={`transition-all duration-300 rounded-full ${
+            onClick={() => goToSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
               index === currentIndex
-                ? `bg-gradient-to-r ${slides[currentIndex].color} w-12 h-3`
-                : 'bg-white/30 hover:bg-white/50 w-3 h-3'
+                ? 'bg-neon-blue shadow-lg shadow-neon-blue/50 scale-125'
+                : 'bg-white/30 hover:bg-white/50'
             }`}
+            aria-label={`${isZh ? '跳转到第' : 'Go to slide'} ${index + 1} ${isZh ? '张' : ''}`}
           />
         ))}
       </div>
 
-      {/* Progress Bar */}
-      <motion.div
-        className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${slides[currentIndex].color}`}
-        initial={{ width: '0%' }}
-        animate={{ width: '100%' }}
-        transition={{ duration: 5, ease: 'linear' }}
-        key={currentIndex}
-      />
+      {/* Stats Overlay */}
+      <div className="absolute bottom-20 right-8 z-20 hidden lg:block">
+        <div className="glass-strong rounded-2xl p-6 border border-white/10">
+          <div className="grid grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="text-2xl font-bold gradient-text">200+</div>
+              <div className="text-sm text-gray-400">{isZh ? '产品系列' : 'Product Series'}</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold gradient-text">30+</div>
+              <div className="text-sm text-gray-400">{isZh ? '年经验' : 'Years Experience'}</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold gradient-text">56</div>
+              <div className="text-sm text-gray-400">{isZh ? '出口国家' : 'Export Countries'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-8 z-20 hidden md:block">
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="flex flex-col items-center text-white/60"
+        >
+          <span className="text-sm mb-2 rotate-90 origin-center">
+            {isZh ? '滚动' : 'Scroll'}
+          </span>
+          <div className="w-px h-12 bg-gradient-to-b from-white/60 to-transparent" />
+        </motion.div>
+      </div>
     </section>
   )
 }

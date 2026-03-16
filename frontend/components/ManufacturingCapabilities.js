@@ -1,11 +1,12 @@
 'use client'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
 import { FiChevronLeft, FiChevronRight, FiAward, FiCheckCircle } from 'react-icons/fi'
 
 export default function ManufacturingCapabilities() {
-  const { t } = useTranslation('common')
+  const router = useRouter()
+  const isZh = router.asPath.startsWith('/zh')
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -20,62 +21,91 @@ export default function ManufacturingCapabilities() {
       url: 'https://sacdepinko.cn/wp-content/uploads/2024/10/10022-1.jpg',
     },
     {
-      url: 'https://sacdepinko.cn/wp-content/uploads/2024/10/10025.jpg',
+      url: 'https://sacdepinko.cn/wp-content/uploads/2024/10/10023-1.jpg',
     },
     {
-      url: 'https://sacdepinko.cn/wp-content/uploads/2024/09/10004-1024x505.jpg',
+      url: 'https://sacdepinko.cn/wp-content/uploads/2024/10/10024-1.jpg',
     }
   ]
 
-  // 认证证书（使用 Testimonials 的样式）
+  const processes = [
+    {
+      step: '01',
+      title: isZh ? '设计开发' : 'Design & Development',
+      description: isZh ? '专业设计团队，创新产品开发' : 'Professional design team, innovative product development',
+      icon: '🎨'
+    },
+    {
+      step: '02', 
+      title: isZh ? '材料采购' : 'Material Sourcing',
+      description: isZh ? '优质原材料，严格质量把控' : 'Premium materials, strict quality control',
+      icon: '📦'
+    },
+    {
+      step: '03',
+      title: isZh ? '精密制造' : 'Precision Manufacturing', 
+      description: isZh ? '先进设备，精工制作' : 'Advanced equipment, precision craftsmanship',
+      icon: '⚙️'
+    },
+    {
+      step: '04',
+      title: isZh ? '质量检测' : 'Quality Testing',
+      description: isZh ? '多重检测，确保品质' : 'Multiple inspections, quality assurance',
+      icon: '🔍'
+    },
+    {
+      step: '05',
+      title: isZh ? '包装发货' : 'Packaging & Shipping',
+      description: isZh ? '安全包装，及时交付' : 'Safe packaging, timely delivery',
+      icon: '📮'
+    }
+  ]
+
   const certifications = [
-    { name: 'ISO 9001', desc: t('manufacturing.iso_desc') || 'Quality Management System', icon: 'FiShield', color: 'from-blue-500 to-cyan-600' },
-    { name: 'BSCI', desc: t('manufacturing.bsci_desc') || 'Business Social Compliance', icon: 'FiCheckCircle', color: 'from-green-500 to-emerald-600' },
-    { name: 'SGS', desc: t('manufacturing.sgs_desc') || 'Product Quality Certification', icon: 'FiAward', color: 'from-purple-500 to-pink-600' },
-    { name: 'CE', desc: t('manufacturing.ce_desc') || 'European Conformity', icon: 'FiCheckCircle', color: 'from-orange-500 to-yellow-600' }
-  ]
-
-  // 生产流程
-  const productionSteps = [
-    { 
-      title: t('manufacturing.step1_title') || 'Design',
-      desc: t('manufacturing.step1_desc') || 'Professional design team'
+    {
+      name: 'ISO 9001',
+      description: isZh ? '质量管理体系认证' : 'Quality Management System',
+      icon: FiAward,
+      color: 'from-blue-500 to-cyan-400'
     },
-    { 
-      title: t('manufacturing.step2_title') || 'Material',
-      desc: t('manufacturing.step2_desc') || 'Premium PU leather'
+    {
+      name: 'BSCI',
+      description: isZh ? '商业社会标准认证' : 'Business Social Compliance Initiative',
+      icon: FiCheckCircle,
+      color: 'from-green-500 to-emerald-400'
     },
-    { 
-      title: t('manufacturing.step3_title') || 'Cutting',
-      desc: t('manufacturing.step3_desc') || 'Precision cutting'
+    {
+      name: 'SGS',
+      description: isZh ? '国际检验认证' : 'International Inspection & Certification',
+      icon: FiAward,
+      color: 'from-purple-500 to-pink-400'
     },
-    { 
-      title: t('manufacturing.step4_title') || 'QC',
-      desc: t('manufacturing.step4_desc') || 'Strict inspection'
-    },
-    { 
-      title: t('manufacturing.step5_title') || 'Shipping',
-      desc: t('manufacturing.step5_desc') || 'Timely delivery'
+    {
+      name: 'CE',
+      description: isZh ? '欧盟合格认证' : 'European Conformity',
+      icon: FiCheckCircle,
+      color: 'from-orange-500 to-red-400'
     }
   ]
-
-  // 自动轮播
-  useEffect(() => {
-    const timer = setInterval(() => {
-      nextSlide()
-    }, 5000)
-    return () => clearInterval(timer)
-  }, [currentIndex])
 
   const nextSlide = () => {
     setDirection(1)
-    setCurrentIndex((prev) => (prev + 1) % factoryImages.length)
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % factoryImages.length)
   }
 
   const prevSlide = () => {
     setDirection(-1)
-    setCurrentIndex((prev) => (prev - 1 + factoryImages.length) % factoryImages.length)
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + factoryImages.length) % factoryImages.length)
   }
+
+  // Auto-play functionality
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide()
+    }, 4000)
+
+    return () => clearInterval(timer)
+  }, [currentIndex])
 
   const slideVariants = {
     enter: (direction) => ({
@@ -97,30 +127,42 @@ export default function ManufacturingCapabilities() {
   return (
     <section ref={ref} className="py-24 relative overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900" />
+      <div className="absolute inset-0 bg-gradient-to-b from-dark-800 via-dark-900 to-dark-800" />
+      
+      {/* Animated Background Elements */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-purple/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-blue/30 rounded-full blur-3xl" />
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+          className="absolute top-1/4 right-1/4 w-96 h-96 border border-neon-purple/20 rounded-full"
+        />
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
+          className="absolute bottom-1/4 left-1/4 w-64 h-64 border border-neon-blue/20 rounded-full"
+        />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
-            <span className="gradient-text">{t('manufacturing.title') || 'Manufacturing Capabilities'}</span>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+            <span className="gradient-text">
+              {isZh ? '制造实力' : 'Manufacturing Capabilities'}
+            </span>
           </h2>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            {t('manufacturing.subtitle') || '30+ Years of Excellence in Handbag Manufacturing'}
+            {isZh ? '30+年手袋制造卓越经验' : '30+ Years of Excellence in Handbag Manufacturing'}
           </p>
         </motion.div>
 
-        {/* Main Carousel */}
-        <div className="relative mb-20">
-          <div className="relative h-[600px] rounded-3xl overflow-hidden glass-strong">
+        {/* Factory Images Carousel */}
+        <div className="mb-20">
+          <div className="relative h-96 md:h-[500px] rounded-3xl overflow-hidden">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={currentIndex}
@@ -137,158 +179,138 @@ export default function ManufacturingCapabilities() {
               >
                 <img
                   src={factoryImages[currentIndex].url}
-                  alt="Factory"
+                  alt={`${isZh ? '工厂车间' : 'Factory Workshop'} ${currentIndex + 1}`}
                   className="w-full h-full object-cover"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
               </motion.div>
             </AnimatePresence>
 
             {/* Navigation Arrows */}
             <button
               onClick={prevSlide}
-              className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full glass-strong hover:glass border border-white/10 hover:border-white/20 flex items-center justify-center transition-all z-10"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 p-3 rounded-full glass-strong hover:glass border border-white/20 hover:border-neon-blue/50 transition-all group"
             >
-              <FiChevronLeft className="w-6 h-6" />
+              <FiChevronLeft className="w-6 h-6 text-white group-hover:text-neon-blue transition-colors" />
             </button>
+            
             <button
               onClick={nextSlide}
-              className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full glass-strong hover:glass border border-white/10 hover:border-white/20 flex items-center justify-center transition-all z-10"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 p-3 rounded-full glass-strong hover:glass border border-white/20 hover:border-neon-blue/50 transition-all group"
             >
-              <FiChevronRight className="w-6 h-6" />
+              <FiChevronRight className="w-6 h-6 text-white group-hover:text-neon-blue transition-colors" />
             </button>
 
-            {/* Dots Indicator */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            {/* Slide Indicators */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex space-x-2">
               {factoryImages.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => {
-                    setDirection(index > currentIndex ? 1 : -1)
-                    setCurrentIndex(index)
-                  }}
-                  className={`h-2 rounded-full transition-all ${
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
                     index === currentIndex
-                      ? 'w-8 bg-neon-blue'
-                      : 'w-2 bg-white/30 hover:bg-white/50'
+                      ? 'bg-neon-blue shadow-lg shadow-neon-blue/50 scale-125'
+                      : 'bg-white/30 hover:bg-white/50'
                   }`}
                 />
               ))}
             </div>
+
+            {/* Factory Stats Overlay */}
+            <div className="absolute bottom-6 right-6 z-10">
+              <div className="glass-strong rounded-xl p-4 border border-white/10">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-lg font-bold gradient-text">500+</div>
+                    <div className="text-xs text-gray-400">{isZh ? '信赖品牌' : 'Trusted Brands'}</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold gradient-text">10,000+</div>
+                    <div className="text-xs text-gray-400">{isZh ? '产品交付' : 'Products Delivered'}</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold gradient-text">98%</div>
+                    <div className="text-xs text-gray-400">{isZh ? '满意度' : 'Satisfaction Rate'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Production Process & Certifications - Side by Side */}
+        {/* Production Process */}
+        <div className="mb-20">
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            className="text-3xl font-bold text-center mb-12"
+          >
+            <span className="gradient-text">{isZh ? '生产流程' : 'Production Process'}</span>
+          </motion.h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            {processes.map((process, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 }}
+                className="relative group"
+              >
+                <div className="glass-strong rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 text-center h-full">
+                  {/* Step Number */}
+                  <div className="text-4xl font-bold gradient-text mb-4">{process.step}</div>
+                  
+                  {/* Icon */}
+                  <div className="text-4xl mb-4">{process.icon}</div>
+                  
+                  {/* Title */}
+                  <h4 className="text-lg font-bold text-white mb-3">{process.title}</h4>
+                  
+                  {/* Description */}
+                  <p className="text-gray-400 text-sm leading-relaxed">{process.description}</p>
+                </div>
+
+                {/* Arrow (except for last item) */}
+                {index < processes.length - 1 && (
+                  <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                    <div className="w-6 h-6 bg-gradient-to-r from-neon-blue to-neon-purple rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs">▶</span>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Certifications */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.4 }}
-          className="grid md:grid-cols-2 gap-20"
+          className="text-center"
         >
-          {/* Production Process - With Flow Arrows */}
-          <div>
-            <h3 className="text-3xl font-bold mb-10 text-neon-blue flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-neon-blue animate-pulse" />
-              {t('manufacturing.process_title') || '生产流程'}
-            </h3>
-            <div className="relative space-y-4">
-              {productionSteps.map((step, index) => (
-                <div key={index} className="relative">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: 0.5 + index * 0.1 }}
-                    whileHover={{ scale: 1.02, x: 8 }}
-                    className="glass-strong rounded-2xl p-6 hover:glass transition-all border border-white/5 hover:border-white/20 hover:shadow-2xl hover:shadow-neon-blue/20 group cursor-pointer relative overflow-hidden"
-                  >
-                    {/* Hover Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neon-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    
-                    <div className="flex items-center gap-5 relative z-10">
-                      <div className={`flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br ${
-                        index === 0 ? 'from-blue-500 to-purple-600' :
-                        index === 1 ? 'from-purple-500 to-pink-600' :
-                        index === 2 ? 'from-blue-400 to-cyan-500' :
-                        index === 3 ? 'from-purple-400 to-blue-500' :
-                        'from-blue-500 to-purple-500'
-                      } flex items-center justify-center text-xl font-bold text-white shadow-lg group-hover:shadow-2xl group-hover:scale-110 transition-all`}>
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-lg font-bold text-white mb-1 group-hover:text-neon-blue transition-colors">
-                          {step.title}
-                        </h4>
-                        <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">{step.desc}</p>
-                      </div>
-                      {/* Progress Indicator */}
-                      <div className="flex-shrink-0 text-xs text-gray-500 font-mono">
-                        {index + 1}/{productionSteps.length}
-                      </div>
-                    </div>
-                  </motion.div>
-                  
-                  {/* Flow Arrow */}
-                  {index < productionSteps.length - 1 && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={isInView ? { opacity: 1 } : {}}
-                      transition={{ delay: 0.6 + index * 0.1 }}
-                      className="flex justify-center py-2"
-                    >
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="w-0.5 h-3 bg-gradient-to-b from-neon-blue/50 to-transparent" />
-                        <div className="text-neon-blue/50 text-xs">▼</div>
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <h3 className="text-3xl font-bold mb-12">
+            <span className="gradient-text">{isZh ? '质量认证' : 'Quality Certifications'}</span>
+          </h3>
 
-          {/* Certifications - Right Side */}
-          <div>
-            <h3 className="text-3xl font-bold mb-10 text-neon-blue flex items-center gap-3">
-              <FiAward className="w-8 h-8" />
-              {t('manufacturing.cert_title') || 'Quality Certifications'}
-            </h3>
-            <div className="space-y-6">
-              {certifications.map((cert, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  whileHover={{ scale: 1.02, x: -8 }}
-                  className="glass-strong rounded-2xl p-6 hover:glass transition-all border border-white/10 hover:border-neon-blue/30 hover:shadow-2xl group cursor-pointer relative overflow-hidden"
-                >
-                  {/* 3D Background Effect */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${cert.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                  
-                  <div className="flex items-center gap-5 relative z-10">
-                    {/* 3D Icon */}
-                    <div className={`flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br ${cert.color} flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-all group-hover:rotate-6 group-hover:scale-110`}>
-                      <FiCheckCircle className="w-8 h-8 text-white" />
-                    </div>
-                    
-                    <div className="flex-1">
-                      <h4 className="text-xl font-bold text-white mb-2 group-hover:scale-105 transition-transform">
-                        {cert.name}
-                      </h4>
-                      <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
-                        {cert.desc}
-                      </p>
-                    </div>
-                    
-                    {/* Verified Badge */}
-                    <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${cert.color} flex items-center justify-center shadow-lg`}>
-                        <span className="text-white text-lg font-bold">✓</span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {certifications.map((cert, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -8 }}
+                className="glass-strong rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 group"
+              >
+                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br ${cert.color} mb-4 group-hover:scale-110 transition-transform`}>
+                  <cert.icon className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-2">{cert.name}</h4>
+                <p className="text-gray-400 text-sm">{cert.description}</p>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </div>
