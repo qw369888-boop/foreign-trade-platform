@@ -1,90 +1,86 @@
 'use client'
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { useTranslation } from 'next-i18next'
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
+import { FiShield, FiTruck, FiAward, FiUsers, FiGlobe, FiClock } from 'react-icons/fi'
 
 export default function Features() {
-  const { t } = useTranslation('common')
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const router = useRouter()
+  const isZh = router.asPath.startsWith('/zh')
 
   const features = [
     {
-      key: 'custom',
-      gradient: 'from-blue-500 to-cyan-400',
-      delay: 0,
+      icon: FiShield,
+      title: isZh ? '质量保证' : 'Quality Assurance',
+      description: isZh ? 'ISO 9001认证，严格的质量控制体系' : 'ISO 9001 certified with strict quality control system',
+      color: 'from-blue-500 to-cyan-500'
     },
     {
-      key: 'quality',
-      gradient: 'from-purple-500 to-pink-400',
-      delay: 0.1,
+      icon: FiTruck,
+      title: isZh ? '快速交付' : 'Fast Delivery', 
+      description: isZh ? '全球物流网络，7-15天快速交付' : 'Global logistics network, 7-15 days fast delivery',
+      color: 'from-green-500 to-emerald-500'
     },
     {
-      key: 'delivery',
-      gradient: 'from-orange-500 to-red-400',
-      delay: 0.2,
+      icon: FiAward,
+      title: isZh ? '专业认证' : 'Professional Certification',
+      description: isZh ? 'BSCI、SGS、CE等多项国际认证' : 'BSCI, SGS, CE and other international certifications',
+      color: 'from-purple-500 to-pink-500'
     },
     {
-      key: 'export',
-      gradient: 'from-green-500 to-emerald-400',
-      delay: 0.3,
+      icon: FiUsers,
+      title: isZh ? '专业团队' : 'Professional Team',
+      description: isZh ? '30年经验的设计和生产团队' : '30 years of experience in design and production team',
+      color: 'from-orange-500 to-red-500'
     },
     {
-      key: 'factory',
-      gradient: 'from-indigo-500 to-blue-400',
-      delay: 0.4,
+      icon: FiGlobe,
+      title: isZh ? '全球服务' : 'Global Service',
+      description: isZh ? '服务全球56个国家和地区' : 'Serving 56 countries and regions worldwide',
+      color: 'from-indigo-500 to-blue-500'
     },
     {
-      key: 'team',
-      gradient: 'from-pink-500 to-rose-400',
-      delay: 0.5,
-    },
+      icon: FiClock,
+      title: isZh ? '24/7支持' : '24/7 Support',
+      description: isZh ? '全天候客户服务和技术支持' : '24/7 customer service and technical support',
+      color: 'from-teal-500 to-green-500'
+    }
   ]
 
   return (
-    <section ref={ref} className="py-24 relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-dark-900" />
-      <div className="absolute inset-0 bg-cyber-grid opacity-10" />
-
-      {/* Floating Orbs */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-        className="absolute top-1/4 right-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl"
-      />
+      <div className="absolute inset-0 bg-gradient-to-b from-dark-800 via-dark-900 to-dark-800" />
+      
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 opacity-30">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+          className="absolute top-1/4 left-1/4 w-64 h-64 border border-neon-blue/20 rounded-full"
+        />
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+          className="absolute bottom-1/4 right-1/4 w-48 h-48 border border-neon-purple/20 rounded-full"
+        />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4"
-          >
-            <span className="gradient-text">{t('features.title')}</span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-xl text-gray-400 max-w-2xl mx-auto"
-          >
-            {t('features.subtitle')}
-          </motion.p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <span className="gradient-text">
+              {isZh ? '为什么选择我们' : 'Why Choose Us'}
+            </span>
+          </h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            {isZh ? '专业手袋制造商，值得信赖的合作伙伴' : 'Professional handbag manufacturer, trusted partner'}
+          </p>
         </motion.div>
 
         {/* Features Grid */}
@@ -92,66 +88,51 @@ export default function Features() {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.5,
-                delay: feature.delay,
-                type: 'spring',
-                stiffness: 100,
-              }}
-              className="group relative"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ y: -10 }}
+              className="group"
             >
-              <motion.div
-                whileHover={{ y: -10 }}
-                className="glass-strong rounded-3xl p-8 h-full border border-white/10 hover:border-white/20 transition-all duration-300 relative overflow-hidden"
-              >
-                {/* Gradient Background on Hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-
-                {/* Number Badge */}
-                <div className="relative z-10 mb-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={isInView ? { scale: 1 } : {}}
-                    transition={{ delay: feature.delay + 0.2, type: 'spring' }}
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-lg`}
-                  >
-                    <span className="text-2xl font-bold text-white">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                  </motion.div>
+              <div className="glass-strong rounded-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 h-full">
+                {/* Icon */}
+                <div className="mb-6">
+                  <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${feature.color} p-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="w-full h-full text-white" />
+                  </div>
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="text-2xl font-bold mb-3 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 transition-all duration-300">
-                    {t(`features.${feature.key}.title`)}
-                  </h3>
-                  <p className="text-gray-400 leading-relaxed">
-                    {t(`features.${feature.key}.description`)}
-                  </p>
+                <h3 className="text-xl font-bold text-white mb-4 group-hover:text-neon-blue transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  {feature.description}
+                </p>
 
-                  {/* Bottom Accent Line */}
-                  <div className={`h-1 bg-gradient-to-r ${feature.gradient} rounded-full mt-6 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`} />
-                </div>
-
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-5`} />
-                </div>
-
-                {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 w-20 h-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className={`absolute top-0 right-0 w-full h-full bg-gradient-to-br ${feature.gradient} opacity-20 rounded-bl-full`} />
-                </div>
-              </motion.div>
-
-              {/* Shadow Layer */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-5 rounded-3xl transform translate-y-2 -z-10 group-hover:translate-y-4 transition-transform duration-300`} />
+                {/* Hover Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/5 to-neon-purple/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
             </motion.div>
           ))}
         </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-16"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="btn-primary btn-glow px-8 py-4 text-lg font-semibold"
+          >
+            {isZh ? '了解更多' : 'Learn More'}
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   )

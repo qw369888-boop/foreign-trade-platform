@@ -1,160 +1,209 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Calculator, Info } from 'lucide-react';
 import { useRouter } from 'next/router';
 
-const AddressForm = ({ 
-  onAddressChange = () => {},
-  onTaxCalculated = () => {},
-  subtotal = 0,
-  className = ""
-}) => {
+const AddressForm = ({ onAddressChange, onTaxCalculated, subtotal }) => {
   const router = useRouter();
   const isZh = router.asPath.startsWith('/zh');
-  
-  // 静态文本
-  const text = {
-    country: isZh ? '国家' : 'Country',
-    state: isZh ? '州/省' : 'State/Province', 
-    city: isZh ? '城市' : 'City',
-    zipCode: isZh ? '邮政编码' : 'Postal Code',
-    street: isZh ? '详细地址' : 'Street Address',
-    customerType: isZh ? '客户类型' : 'Customer Type',
-    individual: isZh ? '个人客户' : 'Individual Customer',
-    business: isZh ? '企业客户' : 'Business Customer',
-    taxId: isZh ? '税号' : 'Tax ID',
-    calculating: isZh ? '计算中...' : 'Calculating...',
-    selectCountry: isZh ? '请选择国家' : 'Select Country',
-    enterState: isZh ? '输入州/省' : 'Enter State/Province',
-    enterCity: isZh ? '输入城市' : 'Enter City',
-    enterZipCode: isZh ? '输入邮政编码' : 'Enter Postal Code',
-    enterStreet: isZh ? '输入详细地址' : 'Enter Street Address',
-    enterTaxId: isZh ? '输入税号（企业客户必填）' : 'Enter Tax ID (Required for Business)'
-  };
+
   const [address, setAddress] = useState({
+    firstName: '',
+    lastName: '',
+    company: '',
+    address: '',
+    apartment: '',
+    city: '',
     country: '',
     state: '',
-    city: '',
-    zipCode: '',
-    street: '',
-    customerType: 'individual',
-    taxId: ''
+    postalCode: '',
+    phone: ''
   });
 
-  const [taxResult, setTaxResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [customerType, setCustomerType] = useState('individual');
 
-  // 当地址改变时自动计算税费
-  useEffect(() => {
-    if (address.country && subtotal > 0) {
-      calculateTax();
-    }
-  }, [address.country, address.state, address.customerType, address.taxId, subtotal]);
-
-  const calculateTax = async () => {
-    if (!address.country || subtotal <= 0) return;
-    
-    setLoading(true);
-    try {
-      const response = await fetch('/api/tax/calculate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          country: address.country,
-          state: address.state,
-          subtotal,
-          customerType: address.customerType,
-          taxId: address.taxId
-        })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        setTaxResult(data.data);
-        onTaxCalculated(data.data);
-      }
-    } catch (error) {
-      console.error('税费计算失败:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const countries = [
+    { code: 'US', name: isZh ? '美国' : 'United States' },
+    { code: 'CN', name: isZh ? '中国' : 'China' },
+    { code: 'GB', name: isZh ? '英国' : 'United Kingdom' },
+    { code: 'DE', name: isZh ? '德国' : 'Germany' },
+    { code: 'FR', name: isZh ? '法国' : 'France' },
+    { code: 'JP', name: isZh ? '日本' : 'Japan' },
+    { code: 'KR', name: isZh ? '韩国' : 'South Korea' },
+    { code: 'AU', name: isZh ? '澳大利亚' : 'Australia' }
+  ];
 
   const handleInputChange = (field, value) => {
     const newAddress = { ...address, [field]: value };
     setAddress(newAddress);
-    onAddressChange(newAddress);
+    onAddressChange && onAddressChange(newAddress);
   };
 
-  const getTaxStatusDisplay = () => {
-    if (!taxResult) return null;
+  const handleCustomerTypeChange = (type) => {
+    setCustomerType(type);
+  };
 
-    if (taxResult.status === 'tax_free') {
-      return (
-        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <div className="flex items-center gap-2 text-green-800">
-            <Info className="w-4 h-4" />
-            <span className="font-medium">{t('address.tax_free_region') || 'Tax-free region'}</span>
-          </div>
-          <p className="text-sm text-green-700 mt-1">
-            {t('address.no_sales_tax') || 'Your order is not subject to sales tax'}
-          </p>
-        </div>
-      );
+  // 模拟税费计算
+  useEffect(() => {
+    if (address.country && subtotal) {
+      const taxRates = {
+        'US': 0.08,
+        'CN': 0.13,
+        'GB': 0.20,
+        'DE': 0.19,
+        'FR': 0.20,
+        'JP': 0.10,
+        'KR': 0.10,
+        'AU': 0.10
+      };
+      
+      const rate = taxRates[address.country] || 0.1;
+      const taxAmount = subtotal * rate;
+      
+      onTaxCalculated && onTaxCalculated({
+        rate: rate,
+        amount: taxAmount,
+        country: address.country
+      });
     }
+  }, [address.country, subtotal, onTaxCalculated]);
 
-    if (taxResult.status === 'tax_exempt') {
-      return (
-        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center gap-2 text-blue-800">
-            <Info className="w-4 h-4" />
-            <span className="font-medium">{t('address.business_tax_exempt') || 'Business tax exempt'}</span>
-          </div>
-          <p className="text-sm text-blue-700 mt-1">
-            {t('address.tax_exempt_benefit') || 'Your business tax ID qualifies for tax exemption'}
-          </p>
-        </div>
-      );
-    }
-
-    if (taxResult.taxable) {
-      return (
-        <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-          <div className="flex items-center gap-2 text-orange-800 mb-2">
-            <Calculator className="w-4 h-4" />
-            <span className="font-medium">税费信息</span>
-          </div>
-          <div className="text-sm space-y-1">
-            <div className="flex justify-between">
-              <span className="text-orange-700">税率:</span>
-              <span className="font-medium text-orange-900">{taxResult.taxRate}%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-orange-700">税费:</span>
-              <span className="font-medium text-orange-900">${taxResult.taxAmount.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between pt-1 border-t border-orange-200">
-              <span className="text-orange-700 font-medium">含税总计:</span>
-              <span className="font-semibold text-orange-900">${taxResult.total.toFixed(2)}</span>
-            </div>
-          </div>
-          <p className="text-xs text-orange-600 mt-2">
-            {taxResult.note}
-          </p>
-        </div>
-      );
-    }
-
-    return null;
+  const text = {
+    customer_type: isZh ? '客户类型' : 'Customer Type',
+    individual: isZh ? '个人客户' : 'Individual Customer',
+    business: isZh ? '企业客户' : 'Business Customer',
+    first_name: isZh ? '名字' : 'First Name',
+    last_name: isZh ? '姓氏' : 'Last Name',
+    company: isZh ? '公司名称' : 'Company Name',
+    address: isZh ? '地址' : 'Address',
+    apartment: isZh ? '公寓/单元号' : 'Apartment/Unit',
+    city: isZh ? '城市' : 'City',
+    country: isZh ? '国家' : 'Country',
+    state: isZh ? '州/省' : 'State/Province',
+    postal_code: isZh ? '邮政编码' : 'Postal Code',
+    phone: isZh ? '电话' : 'Phone',
+    select_country: isZh ? '选择国家' : 'Select Country'
   };
 
   return (
-    <div className={`bg-white rounded-lg ${className}`}>
-      <div className="space-y-4">
-        {/* 国家选择 */}
+    <div className="space-y-6">
+      {/* 客户类型选择 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          {text.customer_type}
+        </label>
+        <div className="flex gap-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="customerType"
+              value="individual"
+              checked={customerType === 'individual'}
+              onChange={(e) => handleCustomerTypeChange(e.target.value)}
+              className="mr-2"
+            />
+            <span className="text-sm text-gray-700">{text.individual}</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="customerType"
+              value="business"
+              checked={customerType === 'business'}
+              onChange={(e) => handleCustomerTypeChange(e.target.value)}
+              className="mr-2"
+            />
+            <span className="text-sm text-gray-700">{text.business}</span>
+          </label>
+        </div>
+      </div>
+
+      {/* 姓名 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <MapPin className="w-4 h-4 inline mr-1" />
-            {t('address.country') || 'Country/Region'} *
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {text.first_name} *
+          </label>
+          <input
+            type="text"
+            value={address.firstName}
+            onChange={(e) => handleInputChange('firstName', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {text.last_name} *
+          </label>
+          <input
+            type="text"
+            value={address.lastName}
+            onChange={(e) => handleInputChange('lastName', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+      </div>
+
+      {/* 公司名称（企业客户） */}
+      {customerType === 'business' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {text.company} *
+          </label>
+          <input
+            type="text"
+            value={address.company}
+            onChange={(e) => handleInputChange('company', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required={customerType === 'business'}
+          />
+        </div>
+      )}
+
+      {/* 地址 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {text.address} *
+        </label>
+        <input
+          type="text"
+          value={address.address}
+          onChange={(e) => handleInputChange('address', e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+
+      {/* 公寓/单元号 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {text.apartment}
+        </label>
+        <input
+          type="text"
+          value={address.apartment}
+          onChange={(e) => handleInputChange('apartment', e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* 城市、国家、州/省、邮编 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {text.city} *
+          </label>
+          <input
+            type="text"
+            value={address.city}
+            onChange={(e) => handleInputChange('city', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {text.country} *
           </label>
           <select
             value={address.country}
@@ -162,191 +211,53 @@ const AddressForm = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
-            <option value="">{t('address.select_country') || 'Please select country/region'}</option>
-            <option value="US">{t('address.country_us') || 'United States'}</option>
-            <option value="AU">{t('address.country_au') || 'Australia'}</option>
-            <option value="TH">{t('address.country_th') || 'Thailand'}</option>
-            <option value="SG">{t('address.country_sg') || 'Singapore'}</option>
-            <option value="MY">{t('address.country_my') || 'Malaysia'}</option>
-            <option value="ID">{t('address.country_id') || 'Indonesia'}</option>
-            <option value="GB">{t('address.country_gb') || 'United Kingdom'}</option>
-            <option value="CA">{t('address.country_ca') || 'Canada'}</option>
-            <option value="JP">{t('address.country_jp') || 'Japan'}</option>
-            <option value="DE">{t('address.country_de') || 'Germany'}</option>
-            <option value="FR">{t('address.country_fr') || 'France'}</option>
+            <option value="">{text.select_country}</option>
+            {countries.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.name}
+              </option>
+            ))}
           </select>
         </div>
+      </div>
 
-        {/* 美国州选择 */}
-        {address.country === 'US' && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('address.state') || 'State'} *
-            </label>
-            <select
-              value={address.state}
-              onChange={(e) => handleInputChange('state', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="">{t('address.select_state') || 'Please select state'}</option>
-              <option value="AL">Alabama</option>
-              <option value="AK">Alaska ({t('address.tax_free_state') || 'Tax-free state'})</option>
-              <option value="AZ">Arizona</option>
-              <option value="AR">Arkansas</option>
-              <option value="CA">California</option>
-              <option value="CO">Colorado</option>
-              <option value="CT">Connecticut</option>
-              <option value="DE">Delaware ({t('address.tax_free_state') || 'Tax-free state'})</option>
-              <option value="FL">Florida</option>
-              <option value="GA">Georgia</option>
-              <option value="HI">Hawaii</option>
-              <option value="ID">Idaho</option>
-              <option value="IL">Illinois</option>
-              <option value="IN">Indiana</option>
-              <option value="IA">Iowa</option>
-              <option value="KS">Kansas</option>
-              <option value="KY">Kentucky</option>
-              <option value="LA">Louisiana</option>
-              <option value="ME">Maine</option>
-              <option value="MD">Maryland</option>
-              <option value="MA">Massachusetts</option>
-              <option value="MI">Michigan</option>
-              <option value="MN">Minnesota</option>
-              <option value="MS">Mississippi</option>
-              <option value="MO">Missouri</option>
-              <option value="MT">Montana (免税州)</option>
-              <option value="NE">Nebraska</option>
-              <option value="NV">Nevada</option>
-              <option value="NH">New Hampshire (免税州)</option>
-              <option value="NJ">New Jersey</option>
-              <option value="NM">New Mexico</option>
-              <option value="NY">New York</option>
-              <option value="NC">North Carolina</option>
-              <option value="ND">North Dakota</option>
-              <option value="OH">Ohio</option>
-              <option value="OK">Oklahoma</option>
-              <option value="OR">Oregon (免税州)</option>
-              <option value="PA">Pennsylvania</option>
-              <option value="RI">Rhode Island</option>
-              <option value="SC">South Carolina</option>
-              <option value="SD">South Dakota</option>
-              <option value="TN">Tennessee</option>
-              <option value="TX">Texas</option>
-              <option value="UT">Utah</option>
-              <option value="VT">Vermont</option>
-              <option value="VA">Virginia</option>
-              <option value="WA">Washington</option>
-              <option value="WV">West Virginia</option>
-              <option value="WI">Wisconsin</option>
-              <option value="WY">Wyoming</option>
-              <option value="DC">Washington D.C.</option>
-            </select>
-          </div>
-        )}
-
-        {/* 城市和邮编 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('address.city') || 'City'} *
-            </label>
-            <input
-              type="text"
-              value={address.city}
-              onChange={(e) => handleInputChange('city', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t('address.enter_city') || 'Enter city name'}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('address.zip_code') || 'Zip Code'} *
-            </label>
-            <input
-              type="text"
-              value={address.zipCode}
-              onChange={(e) => handleInputChange('zipCode', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t('address.enter_zip') || 'Enter postal code'}
-              required
-            />
-          </div>
-        </div>
-
-        {/* 详细地址 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('address.street_address') || 'Street Address'} *
+            {text.state}
           </label>
-          <textarea
-            value={address.street}
-            onChange={(e) => handleInputChange('street', e.target.value)}
-            rows={2}
+          <input
+            type="text"
+            value={address.state}
+            onChange={(e) => handleInputChange('state', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder={t('address.enter_address') || 'Street address, apartment, suite, etc.'}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {text.postal_code} *
+          </label>
+          <input
+            type="text"
+            value={address.postalCode}
+            onChange={(e) => handleInputChange('postalCode', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
+      </div>
 
-        {/* 客户类型 */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t('address.customer_type') || 'Customer Type'}
-          </label>
-          <div className="flex gap-4">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="individual"
-                checked={address.customerType === 'individual'}
-                onChange={(e) => handleInputChange('customerType', e.target.value)}
-                className="mr-2"
-              />
-              {t('address.individual_customer') || 'Individual Customer'}
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="business"
-                checked={address.customerType === 'business'}
-                onChange={(e) => handleInputChange('customerType', e.target.value)}
-                className="mr-2"
-              />
-              {t('address.business_customer') || 'Business Customer'}
-            </label>
-          </div>
-        </div>
-
-        {/* 企业税号 */}
-        {address.customerType === 'business' && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('address.tax_id') || 'Business Tax ID'} ({t('address.optional') || 'Optional'})
-            </label>
-            <input
-              type="text"
-              value={address.taxId}
-              onChange={(e) => handleInputChange('taxId', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t('address.enter_tax_id') || 'Enter business tax ID for tax exemption'}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              {t('address.tax_id_help') || 'Provide valid business tax ID to qualify for tax exemption'}
-            </p>
-          </div>
-        )}
-
-        {/* 税费显示 */}
-        {loading && (
-          <div className="flex items-center gap-2 text-gray-500">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="text-sm">正在计算税费...</span>
-          </div>
-        )}
-
-        {getTaxStatusDisplay()}
+      {/* 电话 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {text.phone}
+        </label>
+        <input
+          type="tel"
+          value={address.phone}
+          onChange={(e) => handleInputChange('phone', e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
     </div>
   );
