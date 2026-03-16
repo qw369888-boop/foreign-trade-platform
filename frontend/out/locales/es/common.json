@@ -1,0 +1,143 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "about": "Sobre Nosotros",
+    "contact": "Contacto",
+    "services": "Servicios"
+  },
+  "hero": {
+    "title": "Fabricante Profesional de Bolsos",
+    "subtitle": "OEM & ODM Desde 1992",
+    "cta_primary": "Ver Productos",
+    "cta_secondary": "Contáctenos",
+    "stat1": "Años de Experiencia",
+    "stat2": "Países",
+    "stat3": "Área de Fábrica (㎡)"
+  },
+  "company": {
+    "name": "Guangzhou Dayi Leather Ltd.",
+    "slogan": "Fabricante Profesional de Bolsos",
+    "description": "Proveedor de bolsos de cuero de alta calidad para marcas profesionales en todo el mundo"
+  },
+  "categories": {
+    "title": "Categorías de Productos",
+    "handbags": "Bolsos de Mano",
+    "shoulder_bags": "Bolsos de Hombro",
+    "crossbody_bags": "Bolsos Cruzados",
+    "tote_bags": "Bolsos Tote",
+    "purses": "Carteras",
+    "all": "Todos",
+    "hot_sale": "Más Vendidos",
+    "new_arrivals": "Novedades 2026"
+  },
+  "products": {
+    "title": "Productos Destacados",
+    "new": "Nuevo",
+    "view_all": "Ver Todos los Productos",
+    "moq": "MOQ",
+    "loading": "Cargando...",
+    "no_products": "No hay productos en esta categoría",
+    "all_products": "Todos los Productos",
+    "products_available": "productos disponibles",
+    "load_failed": "Error al cargar productos",
+    "load_error": "Error al cargar productos",
+    "view_details": "Ver Detalles"
+  },
+  "features": {
+    "title": "Por Qué Elegirnos",
+    "subtitle": "Fabricante profesional de bolsos, socio de confianza",
+    "custom": {
+      "title": "Servicio Personalizado",
+      "description": "30 años de experiencia, soporte OEM/ODM, personalización de lotes pequeños"
+    },
+    "quality": {
+      "title": "Garantía de Calidad",
+      "description": "Control de calidad estricto, cada producto pasa múltiples inspecciones"
+    },
+    "delivery": {
+      "title": "Entrega Rápida",
+      "description": "7-15 días para muestras, 30-45 días para producción en masa"
+    },
+    "export": {
+      "title": "Exportación Global",
+      "description": "Exportación a 56 países, rica experiencia en comercio internacional"
+    },
+    "factory": {
+      "title": "Directo de Fábrica",
+      "description": "Fábrica de 5000+ m², sin intermediarios, mejores precios"
+    },
+    "team": {
+      "title": "Equipo Profesional",
+      "description": "Diseñadores y artesanos senior, servicio personalizado"
+    }
+  },
+  "footer": {
+    "company_info": "Información de la Empresa",
+    "quick_links": "Enlaces Rápidos",
+    "contact_us": "Contáctenos",
+    "follow_us": "Síguenos",
+    "copyright": "© 2024 Guangzhou Dayi Leather Ltd. Todos los derechos reservados.",
+    "description": "Fabricante profesional de bolsos desde 1992. Servicios OEM & ODM de alta calidad para marcas de moda en todo el mundo.",
+    "electronics": "Bolsos de Mano",
+    "fashion": "Bolsos Tote",
+    "industrial": "Bolsos de Hombro",
+    "home": "Bolsos Cruzados",
+    "about": "Sobre Nosotros",
+    "careers": "Carreras",
+    "press": "Prensa",
+    "blog": "Blog",
+    "help": "Centro de Ayuda",
+    "contact": "Contáctenos",
+    "shipping": "Envío",
+    "returns": "Devoluciones",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "cookies": "Política de Cookies",
+    "gdpr": "GDPR",
+    "products_title": "Productos",
+    "company_title": "Empresa",
+    "support_title": "Soporte",
+    "legal_title": "Legal",
+    "newsletter_title": "Mantente Actualizado",
+    "newsletter_desc": "Suscríbete a nuestro boletín para las últimas actualizaciones y ofertas",
+    "email_placeholder": "Ingresa tu correo",
+    "subscribe": "Suscribirse",
+    "back_to_top": "Volver Arriba",
+    "rights": "Todos los derechos reservados."
+  },
+  "testimonials": {
+    "title": "Historias de Éxito de Clientes",
+    "subtitle": "Confiado por marcas de moda en todo el mundo para la fabricación de bolsos premium",
+    "trusted_brands": "Marcas de Confianza",
+    "products_delivered": "Productos Entregados",
+    "satisfaction_rate": "Tasa de Satisfacción",
+    "years_experience": "Años de Experiencia",
+    "quality_management": "Gestión de Calidad",
+    "export_license": "Licencia de Exportación",
+    "global_trade": "Comercio Global",
+    "quality_certified": "Certificado de Calidad",
+    "premium_standards": "Estándares Premium",
+    "professional_service": "Servicio Profesional",
+    "certified_title": "Certificado y Confiable",
+    "certified_subtitle": "Estándares y certificaciones líderes en la industria"
+  },
+  "brands": {
+    "title": "Confiado por empresas líderes en todo el mundo"
+  },
+  "carousel": {
+    "slide1_title": "Novedades de Moda 2026",
+    "slide1_subtitle": "Bolsos de calidad premium, liderando tendencias de moda",
+    "slide2_title": "Bolsos de Lujo",
+    "slide2_subtitle": "Diseño clásico, mostrando gusto y elegancia",
+    "slide3_title": "Bolsos de Hombro Elegantes",
+    "slide3_subtitle": "Fácil de combinar, temperamento elegante",
+    "slide4_title": "Bolsos Cruzados Elegantes",
+    "slide4_subtitle": "Portátil y práctico, versátil y moderno",
+    "slide5_title": "Más Vendidos",
+    "slide5_subtitle": "Artículos populares, calidad garantizada",
+    "stat_products": "Series de Productos",
+    "stat_years": "Años de Experiencia",
+    "stat_countries": "Países de Exportación"
+  }
+}
