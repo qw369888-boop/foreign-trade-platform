@@ -1,36 +1,37 @@
 'use client'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
 import { FiMail, FiPhone, FiMapPin, FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiGithub } from 'react-icons/fi'
 
 export default function Footer() {
-  const { t } = useTranslation('common')
+  const router = useRouter()
+  const isZh = router.asPath.startsWith('/zh')
 
   const footerLinks = {
     products: [
-      { name: t('categories.handbags') || 'Handbags', href: '/products?category=Handbags' },
-      { name: t('categories.tote_bags') || 'Tote Bags', href: '/products?category=Tote Bags' },
-      { name: t('categories.shoulder_bags') || 'Shoulder Bags', href: '/products?category=Shoulder Bags' },
-      { name: t('categories.crossbody_bags') || 'Crossbody Bags', href: '/products?category=Crossbody Bags' },
+      { name: isZh ? '手提包' : 'Handbags', href: isZh ? '/zh/products?category=Handbags' : '/products?category=Handbags' },
+      { name: isZh ? '托特包' : 'Tote Bags', href: isZh ? '/zh/products?category=Tote%20Bags' : '/products?category=Tote%20Bags' },
+      { name: isZh ? '单肩包' : 'Shoulder Bags', href: isZh ? '/zh/products?category=Shoulder%20Bags' : '/products?category=Shoulder%20Bags' },
+      { name: isZh ? '斜挎包' : 'Crossbody Bags', href: isZh ? '/zh/products?category=Crossbody%20Bags' : '/products?category=Crossbody%20Bags' },
     ],
     company: [
-      { name: t('footer.about') || 'About Us', href: '/about' },
-      { name: t('footer.careers') || 'Careers', href: '/careers' },
-      { name: t('footer.press') || 'Press', href: '/press' },
-      { name: t('footer.blog') || 'Blog', href: '/blog' },
+      { name: isZh ? '关于我们' : 'About Us', href: isZh ? '/zh/about' : '/about' },
+      { name: isZh ? '招聘' : 'Careers', href: isZh ? '/zh/careers' : '/careers' },
+      { name: isZh ? '新闻' : 'Press', href: isZh ? '/zh/press' : '/press' },
+      { name: isZh ? '博客' : 'Blog', href: isZh ? '/zh/blog' : '/blog' },
     ],
     support: [
-      { name: t('footer.help') || 'Help Center', href: '/help' },
-      { name: t('footer.contact') || 'Contact Us', href: '/contact' },
-      { name: t('footer.shipping') || 'Shipping', href: '/shipping' },
-      { name: t('footer.returns') || 'Returns', href: '/returns' },
+      { name: isZh ? '帮助中心' : 'Help Center', href: isZh ? '/zh/help' : '/help' },
+      { name: isZh ? '联系我们' : 'Contact Us', href: isZh ? '/zh/contact' : '/contact' },
+      { name: isZh ? '物流配送' : 'Shipping', href: isZh ? '/zh/shipping' : '/shipping' },
+      { name: isZh ? '退换货' : 'Returns', href: isZh ? '/zh/returns' : '/returns' },
     ],
     legal: [
-      { name: t('footer.privacy') || 'Privacy Policy', href: '/privacy' },
-      { name: t('footer.terms') || 'Terms of Service', href: '/terms' },
-      { name: t('footer.cookies') || 'Cookie Policy', href: '/cookies' },
-      { name: t('footer.gdpr') || 'GDPR', href: '/gdpr' },
+      { name: isZh ? '隐私政策' : 'Privacy Policy', href: isZh ? '/zh/privacy' : '/privacy' },
+      { name: isZh ? '服务条款' : 'Terms of Service', href: isZh ? '/zh/terms' : '/terms' },
+      { name: isZh ? 'Cookie政策' : 'Cookie Policy', href: isZh ? '/zh/cookies' : '/cookies' },
+      { name: 'GDPR', href: isZh ? '/zh/gdpr' : '/gdpr' },
     ],
   }
 
@@ -46,6 +47,7 @@ export default function Footer() {
     <footer className="relative overflow-hidden bg-dark-900 border-t border-white/10">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-cyber-grid opacity-5" />
+      
       <motion.div
         animate={{
           scale: [1, 1.2, 1],
@@ -76,7 +78,7 @@ export default function Footer() {
         <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center space-x-2 mb-6 group">
+            <Link href={isZh ? "/zh" : "/"} className="flex items-center space-x-2 mb-6 group">
               <motion.div
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
@@ -87,7 +89,7 @@ export default function Footer() {
               <span className="text-2xl font-bold gradient-text">TradePro</span>
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              {t('footer.description') || 'Next-generation platform for international commerce. Connect with verified suppliers worldwide.'}
+              {isZh ? '专业手袋制造商，始于1992年。为全球时尚品牌提供高品质OEM & ODM服务。' : 'Professional handbag manufacturer since 1992. Providing high-quality OEM & ODM services for global fashion brands.'}
             </p>
 
             {/* Contact Info */}
@@ -97,32 +99,29 @@ export default function Footer() {
                 href="mailto:qw369888@gmail.com"
                 className="flex items-center gap-3 text-gray-400 hover:text-neon-blue transition-colors"
               >
-                <FiMail className="w-5 h-5" />
-                <span>{t('footer.email') || 'qw369888@gmail.com'}</span>
+                <FiMail className="w-4 h-4" />
+                <span className="text-sm">qw369888@gmail.com</span>
               </motion.a>
               <motion.a
                 whileHover={{ x: 5 }}
                 href="https://wa.me/8615713656900"
                 className="flex items-center gap-3 text-gray-400 hover:text-neon-blue transition-colors"
               >
-                <FiPhone className="w-5 h-5" />
-                <span>{t('footer.phone') || '+86 157 1365 6900'}</span>
+                <FiPhone className="w-4 h-4" />
+                <span className="text-sm">+86 157 1365 6900</span>
               </motion.a>
-              <motion.div
-                whileHover={{ x: 5 }}
-                className="flex items-center gap-3 text-gray-400"
-              >
-                <FiMapPin className="w-5 h-5" />
-                <span>{t('footer.address') || 'Guangzhou, Guangdong, China'}</span>
-              </motion.div>
+              <div className="flex items-center gap-3 text-gray-400">
+                <FiMapPin className="w-4 h-4" />
+                <span className="text-sm">{isZh ? '广州，广东，中国' : 'Guangzhou, Guangdong, China'}</span>
+              </div>
             </div>
           </div>
 
           {/* Links Sections */}
-          <FooterLinkSection title={t('footer.products_title') || 'Products'} links={footerLinks.products} />
-          <FooterLinkSection title={t('footer.company_title') || 'Company'} links={footerLinks.company} />
-          <FooterLinkSection title={t('footer.support_title') || 'Support'} links={footerLinks.support} />
-          <FooterLinkSection title={t('footer.legal_title') || 'Legal'} links={footerLinks.legal} />
+          <FooterLinkSection title={isZh ? '产品' : 'Products'} links={footerLinks.products} />
+          <FooterLinkSection title={isZh ? '公司' : 'Company'} links={footerLinks.company} />
+          <FooterLinkSection title={isZh ? '支持' : 'Support'} links={footerLinks.support} />
+          <FooterLinkSection title={isZh ? '法律' : 'Legal'} links={footerLinks.legal} />
         </div>
 
         {/* Newsletter Section */}
@@ -134,15 +133,15 @@ export default function Footer() {
         >
           <div className="max-w-2xl mx-auto text-center">
             <h3 className="text-2xl font-bold mb-4 gradient-text">
-              {t('footer.newsletter_title') || 'Stay Updated'}
+              {isZh ? '保持更新' : 'Stay Updated'}
             </h3>
             <p className="text-gray-400 mb-6">
-              {t('footer.newsletter_desc') || 'Subscribe to our newsletter for the latest updates and offers'}
+              {isZh ? '订阅我们的新闻通讯，获取最新更新和优惠' : 'Subscribe to our newsletter for the latest updates and offers'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
                 type="email"
-                placeholder={t('footer.email_placeholder') || 'Enter your email'}
+                placeholder={isZh ? '输入您的邮箱' : 'Enter your email'}
                 className="flex-1 px-6 py-3 rounded-full glass-strong border border-white/10 focus:border-neon-blue focus:outline-none transition-colors text-white placeholder-gray-500"
               />
               <motion.button
@@ -150,7 +149,7 @@ export default function Footer() {
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-3 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple text-white font-semibold hover:shadow-lg hover:shadow-neon-blue/50 transition-all"
               >
-                {t('footer.subscribe') || 'Subscribe'}
+                {isZh ? '订阅' : 'Subscribe'}
               </motion.button>
             </div>
           </div>
@@ -160,7 +159,7 @@ export default function Footer() {
         <div className="py-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
           {/* Copyright */}
           <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} TradePro. {t('footer.rights') || 'All rights reserved.'}
+            © {new Date().getFullYear()} TradePro. {isZh ? '版权所有。' : 'All rights reserved.'}
           </p>
 
           {/* Social Links */}
@@ -171,9 +170,9 @@ export default function Footer() {
                 <motion.a
                   key={index}
                   href={social.href}
-                  whileHover={{ scale: 1.2, y: -3 }}
+                  whileHover={{ scale: 1.2, y: -2 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`w-10 h-10 rounded-full glass-strong flex items-center justify-center text-gray-400 ${social.color} transition-colors border border-white/10 hover:border-white/20`}
+                  className={`p-3 rounded-full glass hover:glass-strong transition-all ${social.color}`}
                 >
                   <Icon className="w-5 h-5" />
                 </motion.a>
@@ -183,12 +182,12 @@ export default function Footer() {
 
           {/* Back to Top */}
           <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="px-6 py-2 rounded-full glass-strong border border-white/10 hover:border-neon-blue text-gray-400 hover:text-neon-blue transition-all text-sm font-medium"
+            className="px-4 py-2 rounded-full glass hover:glass-strong transition-all text-gray-400 hover:text-white text-sm"
           >
-            {t('footer.back_to_top') || 'Back to Top'} ↑
+            {isZh ? '返回顶部 ↑' : 'Back to Top ↑'}
           </motion.button>
         </div>
       </div>
@@ -196,22 +195,29 @@ export default function Footer() {
   )
 }
 
+// Footer Link Section Component
 function FooterLinkSection({ title, links }) {
   return (
     <div>
-      <h4 className="text-white font-bold mb-6 text-lg">{title}</h4>
+      <h4 className="text-lg font-bold text-white mb-6">{title}</h4>
       <ul className="space-y-3">
-        {links.map((link) => (
-          <li key={link.name}>
-            <Link href={link.href}>
-              <motion.span
-                whileHover={{ x: 5 }}
-                className="text-gray-400 hover:text-neon-blue transition-colors inline-block"
-              >
+        {links.map((link, index) => (
+          <motion.li
+            key={index}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Link
+              href={link.href}
+              className="text-gray-400 hover:text-neon-blue transition-colors text-sm block py-1"
+            >
+              <span className="hover:translate-x-1 transition-transform inline-block">
                 {link.name}
-              </motion.span>
+              </span>
             </Link>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>

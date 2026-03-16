@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Calculator, Info } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 
 const AddressForm = ({ 
   onAddressChange = () => {},
@@ -8,7 +8,28 @@ const AddressForm = ({
   subtotal = 0,
   className = ""
 }) => {
-  const { t } = useTranslation('common');
+  const router = useRouter();
+  const isZh = router.asPath.startsWith('/zh');
+  
+  // 静态文本
+  const text = {
+    country: isZh ? '国家' : 'Country',
+    state: isZh ? '州/省' : 'State/Province', 
+    city: isZh ? '城市' : 'City',
+    zipCode: isZh ? '邮政编码' : 'Postal Code',
+    street: isZh ? '详细地址' : 'Street Address',
+    customerType: isZh ? '客户类型' : 'Customer Type',
+    individual: isZh ? '个人客户' : 'Individual Customer',
+    business: isZh ? '企业客户' : 'Business Customer',
+    taxId: isZh ? '税号' : 'Tax ID',
+    calculating: isZh ? '计算中...' : 'Calculating...',
+    selectCountry: isZh ? '请选择国家' : 'Select Country',
+    enterState: isZh ? '输入州/省' : 'Enter State/Province',
+    enterCity: isZh ? '输入城市' : 'Enter City',
+    enterZipCode: isZh ? '输入邮政编码' : 'Enter Postal Code',
+    enterStreet: isZh ? '输入详细地址' : 'Enter Street Address',
+    enterTaxId: isZh ? '输入税号（企业客户必填）' : 'Enter Tax ID (Required for Business)'
+  };
   const [address, setAddress] = useState({
     country: '',
     state: '',
